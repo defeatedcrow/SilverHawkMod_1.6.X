@@ -1,0 +1,20 @@
+[
+  {
+    "description":"",
+    "parent":"",
+    "logoFile":"",
+    "credits":"defeatedcrow",
+    "dependencies":[],
+    "modid":"DCsSilverhawk",
+    "mcversion":"1.6.2",
+    "screenshots":[],
+    "authorList":["defeatedcrow"],
+    "name":"SilverHawkMod",
+    "url":"",
+    "updateUrl":"",
+    "version":"1.6.2_0.1A",
+    "requiredMods":[
+      "Minecraft Forge1.6.2 9.10.1.871"
+    ]
+  }
+]

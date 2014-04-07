@@ -5,11 +5,12 @@ import java.util.logging.Level;
 
 import org.lwjgl.input.Keyboard;
 
+
+
 //import mods.defeatedcrow.common.SHPacketHandler;
 import mods.defeatedcrow.block.*;
-import mods.defeatedcrow.entity.EntityCrow;
-import mods.defeatedcrow.entity.EntitySilverChicken;
-import mods.defeatedcrow.entity.EntitySilverHawk;
+import mods.defeatedcrow.entity.*;
+import mods.defeatedcrow.entity.projectile.*;
 import mods.defeatedcrow.event.CDEventResister;
 import mods.defeatedcrow.event.NewSoundEvent;
 import mods.defeatedcrow.item.*;
@@ -26,6 +27,7 @@ import net.minecraft.item.EnumToolMaterial;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Item;
 import net.minecraft.src.*;
+import net.minecraft.util.DamageSource;
 import net.minecraft.util.WeightedRandomChestContent;
 import net.minecraft.world.biome.BiomeGenBase;
 import net.minecraftforge.common.BiomeDictionary;
@@ -52,12 +54,12 @@ import cpw.mods.fml.relauncher.SideOnly;
 @Mod(
 		modid = "DCsSilverHawk",
 		name = "SilverHawkMod",
-		version = "1.6.4_0.1A"
+		version = "1.6.4_0.2A"
 		)
 @NetworkMod(
 		clientSideRequired = true,
-		serverSideRequired = false
-//		channels = {"FliKey", "SneakKey"}, packetHandler = SHPacketHandler.class
+		serverSideRequired = false,
+		channels = {"FlyKey", "SneakKey"}, packetHandler = SHPacketHandler.class
 		)
 
 public class SilverHawkCore {
@@ -113,9 +115,22 @@ public class SilverHawkCore {
 	public int entityIdCrow = 250;
 	public int entityIdSHawk = 251;
 	public int entityIdSChicken = 252;
+	public int entityIdRgray = 253;
+	public int entityIdKerberos = 254;
+	public int entityIdFireleo = 255;
+	public int entityIdToxicviper = 256;
+	
+	//id of projectiles
+	public static int projIdShifter = 270;
+	public int projIdNormal = 0;
+	public int projIdSLaser = 1;
+	public int projIdSWave = 2;
+	public int projIdLWave = 3;
 	
 	public static boolean useEXRecipe = false;
 	public static boolean addDungeonRootCD = true;
+	public static boolean disableDamageForTameable = true;
+	public static boolean disableDamageForVillager = true;
 
 	public static int modelLantern;
 	public static int cfgFlyKeySet = Keyboard.KEY_SPACE;
@@ -123,6 +138,10 @@ public class SilverHawkCore {
 	
 	public static EnumArmorMaterial enumArmorMaterialCrow;
 	public static EnumToolMaterial enumToolMaterialCrow;
+	
+	//new damage sources
+	public static DamageSource normalBullet;
+	
 	
 	
 	@EventHandler
@@ -165,7 +184,13 @@ public class SilverHawkCore {
 			Property entitySChicken = cfg.get("entity", "SilverChickenID", entityIdSChicken);
 			Property recipeBoolean = cfg.get("Setting", "Use Extra Recipe", useEXRecipe, "Add recipe for crafting blackfeather.");
 			Property chestBoolean = cfg.get("Setting", "Add Custom Dungeon Root", addDungeonRootCD, "Not add custom dungeon root.");
-
+			Property disDamageTameable = cfg.get("Setting", "Disable Damage for Tamable Entity", disableDamageForTameable,
+					"Disable the bullet damage given to the animal.");
+			Property disDamageVillager = cfg.get("Setting", "Disable Damage for Villager", disableDamageForVillager,
+					"Disable the bullet damage given to the villager.");
+			Property projId = cfg.get("entity", "Projectiles ID Shift", projIdShifter,
+					"Shift ID number of the projectiles of this MOD.");
+			
 			blockIdOre = blockOre.getInt();
 			blockIdFLight = blockFLight.getInt();
 			blockIdFGlass = blockFGlass.getInt();
@@ -198,7 +223,14 @@ public class SilverHawkCore {
 			
 			useEXRecipe = recipeBoolean.getBoolean(false);
 			addDungeonRootCD = chestBoolean.getBoolean(true);
+			disableDamageForTameable = disDamageTameable.getBoolean(true);
+			disableDamageForVillager = disDamageVillager.getBoolean(true);
 			
+			projIdShifter = projId.getInt();
+			projIdNormal = projIdShifter + 0;
+			projIdSLaser = projIdShifter + 1;
+			projIdSWave = projIdShifter + 2;
+			projIdLWave = projIdShifter + 3;
 
 		}
 		catch (Exception e)
@@ -351,12 +383,12 @@ public class SilverHawkCore {
 	    	EntityRegistry.registerGlobalEntityID(EntityCrow.class, "crow", EntityRegistry.findGlobalUniqueEntityId(), 0x000000, 0xB000CC);
 	    }
 	    
-//	    if(entityIdSHawk != 0) {
-//	    	EntityRegistry.registerGlobalEntityID(EntitySilverHawk.class, "silverHawk", entityIdSHawk, 0xEEEEEE, 0xD02040);
-//	    }
-//	    else {
-//	    	EntityRegistry.registerGlobalEntityID(EntitySilverChicken.class, "silverHawk", EntityRegistry.findGlobalUniqueEntityId(), 0xEEEEEE, 0xD02040);
-//	    }
+	    if(entityIdSHawk != 0) {
+	    	EntityRegistry.registerGlobalEntityID(EntitySilverHawk.class, "silverHawk", entityIdSHawk, 0xEEEEEE, 0xD02040);
+	    }
+	    else {
+	    	EntityRegistry.registerGlobalEntityID(EntitySilverChicken.class, "silverHawk", EntityRegistry.findGlobalUniqueEntityId(), 0xEEEEEE, 0xD02040);
+	    }
 //	    
 //	    if(entityIdSChicken != 0) {
 //	    	EntityRegistry.registerGlobalEntityID(EntitySilverChicken.class, "silverChicken", entityIdSChicken, 0xEEEEEE, 0x505050);
@@ -365,9 +397,16 @@ public class SilverHawkCore {
 //	    	EntityRegistry.registerGlobalEntityID(EntitySilverChicken.class, "silverChicken", EntityRegistry.findGlobalUniqueEntityId(), 0xEEEEEE, 0x505050);
 //	    }
 //	      
+	    //mobs
 	    EntityRegistry.registerModEntity(EntityCrow.class, "crow", entityIdCrow, this, 250, 5, true);
-//	    EntityRegistry.registerModEntity(EntitySilverHawk.class, "silverHawk", entityIdSHawk, this, 250, 5, true);
+	    EntityRegistry.registerModEntity(EntitySilverHawk.class, "silverHawk", entityIdSHawk, this, 250, 5, true);
 //	    EntityRegistry.registerModEntity(EntitySilverChicken.class, "silverChicken", entityIdSChicken, this, 250, 5, true);
+	    
+	    //proj
+	    EntityRegistry.registerModEntity(EntityNormalGatling.class, "DCGatling", projIdNormal, this, 128, 5, true);
+	    EntityRegistry.registerModEntity(EntityShortLaser.class, "DCSLaser", projIdSLaser, this, 128, 5, true);
+	    EntityRegistry.registerModEntity(EntitySmallWave.class, "DCSWave", projIdSWave, this, 128, 5, true);
+	    EntityRegistry.registerModEntity(EntityLargeWave.class, "DCLWave", projIdLWave, this, 128, 5, true);
 	      
 	      
 	    EntityRegistry.addSpawn(EntityCrow.class, 20, 1, 4, EnumCreatureType.creature, BiomeGenBase.forest);

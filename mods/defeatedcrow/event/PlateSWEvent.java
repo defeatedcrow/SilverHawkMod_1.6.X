@@ -4,11 +4,13 @@ import org.lwjgl.input.Keyboard;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import mods.defeatedcrow.common.SHPacketHandler;
 import mods.defeatedcrow.common.SilverHawkCore;
 import net.minecraft.block.Block;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving;
+import net.minecraft.entity.passive.EntityTameable;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.item.ItemStack;
@@ -70,7 +72,6 @@ public class PlateSWEvent implements IForgeEvent {
 					Flight(playerSP);
 				}
 			}
-			
 		}
 	  }
 	
@@ -112,6 +113,7 @@ public class PlateSWEvent implements IForgeEvent {
 
 		player.fallDistance = 0.0f;
 		boolean flyKey = SilverHawkCore.proxy.getFlyKeyDown();
+		boolean sneakKey = SilverHawkCore.proxy.getSneakKeyDown();
 
 		if (allowedFly && (flyKey || !player.onGround))
         {
@@ -130,10 +132,14 @@ public class PlateSWEvent implements IForgeEvent {
            {
               player.motionY += 0.15f;
            }
+           
+           if (sneakKey)
+           {
+        	   player.motionY = 0.0f;
+           }
 
         }
         else
            player.jumpMovementFactor = 0.02f;
 	}
-	
 }

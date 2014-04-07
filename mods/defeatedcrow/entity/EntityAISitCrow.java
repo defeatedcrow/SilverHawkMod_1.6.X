@@ -30,7 +30,7 @@ public class EntityAISitCrow extends EntityAIBase
         {
             return false;
         }
-        else if (!this.theEntity.onGround)
+        else if (!this.theEntity.onGround && this.theEntity.riddenByEntity == null)
         {
             return false;
         }

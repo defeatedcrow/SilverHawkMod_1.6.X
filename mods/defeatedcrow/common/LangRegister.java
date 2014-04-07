@@ -85,6 +85,25 @@ public class LangRegister {
 		
 		LanguageRegistry.addName(SilverHawkCore.fluoroSword, "Crow Katana");
 		LanguageRegistry.instance().addNameForObject(SilverHawkCore.fluoroSword, "ja_JP", "カラスの脇差");
+		
+		//DamageSource
+		LanguageRegistry.instance().addStringLocalization("DCsGatling.name", "Bullet");
+		LanguageRegistry.instance().addStringLocalization("DCsGatling.name", "ja_JP", "弾");
+		
+		LanguageRegistry.instance().addStringLocalization("DCsLasor.name", "Lasor");
+		LanguageRegistry.instance().addStringLocalization("DCsGatling.name", "ja_JP", "レーザー");
+		
+		LanguageRegistry.instance().addStringLocalization("DCsWave.name", "Wave");
+		LanguageRegistry.instance().addStringLocalization("DCsGatling.name", "ja_JP", "ウェーブ");
+		
+		LanguageRegistry.instance().addStringLocalization("death.attack.DCsGatling", "%1$s was shot by %2$s");
+		LanguageRegistry.instance().addStringLocalization("death.attack.DCsGatling", "ja_JP", "%1$s は %2$s に撃たれた。");
+		
+		LanguageRegistry.instance().addStringLocalization("death.attack.DCsLaser", "%1$s was burned by laser %2$s shot");
+		LanguageRegistry.instance().addStringLocalization("death.attack.DCsLaser", "ja_JP", "%1$s は %2$s が撃ったレーザーで焼け死んだ。");
+		
+		LanguageRegistry.instance().addStringLocalization("death.attack.DCsWave", "%1$s was erased by energy wave %2$s shot");
+		LanguageRegistry.instance().addStringLocalization("death.attack.DCsWave", "ja_JP", "%1$s は %2$s が撃ったエネルギー波に消し飛ばされた。");
 	}
 
 }

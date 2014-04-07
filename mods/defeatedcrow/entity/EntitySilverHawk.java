@@ -18,13 +18,17 @@ import net.minecraft.entity.projectile.EntityArrow;
 import net.minecraft.item.*;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.pathfinding.PathEntity;
+import net.minecraft.potion.Potion;
+import net.minecraft.potion.PotionEffect;
 import net.minecraft.src.*;
 import net.minecraft.util.DamageSource;
+import net.minecraft.util.MathHelper;
 import net.minecraft.world.World;
 
 
 public class EntitySilverHawk extends EntityTameable{
 	
+	/**羽ばたいたりするモーションに使う*/
 	public float wingA = 0.0F;
     public float dPos = 0.0F;
     public float wingC;
@@ -32,16 +36,25 @@ public class EntitySilverHawk extends EntityTameable{
     public float destB = 1.0F;
     protected int soundRand;
     
+    /** 飛行モードに使用。空中にいる間ずONになり、onGround時にfalse。
+     * 正確には地上でFlyKeyを押すとtrueになり飛行モードに移行。
+     * 着地・または何らかの原因で解除されるとfalseになり、falseだと落ちる。
+     * いずれにしてもイキモノ・騎乗者共に落下ダメージはない。*/
     protected boolean isFlying;
+    protected boolean flyKeyDown;
+    protected boolean sneakKeyDown;
+    
+    
     
 	
 	public EntitySilverHawk(World par1World)
 	{
 		super (par1World);
-		this.setSize(0.4F, 0.7F);
+		this.setSize(0.8F, 0.8F);
 		this.soundRand = this.rand.nextInt(6000) + 6000;
 		float f = 0.3F;
 		this.getNavigator().setAvoidsWater(true);
+		this.getNavigator().setCanSwim(true);
 		this.tasks.addTask(1, new EntityAISwimming(this));
         this.tasks.addTask(2, this.aiSit);
         this.tasks.addTask(3, new EntityAILeapAtTarget(this, 0.4F));
@@ -96,7 +109,19 @@ public class EntitySilverHawk extends EntityTameable{
         super.entityInit();
         this.dataWatcher.addObject(18, new Float(this.getHealth()));
         this.dataWatcher.addObject(19, new Byte((byte)0));
+        this.dataWatcher.addObject(20, new Byte((byte)0));
     }
+	
+	public boolean getFlyKeyDown()
+	{
+		return this.dataWatcher.getWatchableObjectByte(20) > 0;
+	}
+	
+	public void setFlyKeyDown(boolean par1)
+	{
+		byte flag = (byte) (par1 == true ? 1 : 0);
+		this.dataWatcher.updateObject(20, flag);
+	}
 	
 	public void setAttackTarget(EntityLiving par1EntityLiving)
     {
@@ -210,6 +235,23 @@ public class EntitySilverHawk extends EntityTameable{
 			this.isFlying = false;
 		}
 		
+		if (this.getFlyKeyDown())
+		{
+			this.motionY += 0.10F;
+		}
+		
+		if (this.isInWater() && !this.worldObj.isRemote)
+		{
+			PotionEffect potion = new PotionEffect(Potion.waterBreathing.id, 100, 0);
+			this.addPotionEffect(potion);
+			this.motionY += 0.035F;
+			
+			if (this.riddenByEntity != null && this.riddenByEntity instanceof EntityLivingBase)
+			{
+				((EntityLivingBase)this.riddenByEntity).addPotionEffect(potion);
+			}
+		}
+		
 	}
 	
 	public void setTamed(boolean par1)
@@ -232,54 +274,71 @@ public class EntitySilverHawk extends EntityTameable{
 		
 		if (this.isTamed())
 		{
-	            if (itemstack != null)
+	            if (this.riddenByEntity == null)
 	            {
-	                if (Item.itemsList[itemstack.itemID] instanceof ItemFood)
-	                {
-	                    ItemFood itemfood = (ItemFood)Item.itemsList[itemstack.itemID];
+	            	if (itemstack != null)
+		            {
+		                if (Item.itemsList[itemstack.itemID] instanceof ItemFood)
+		                {
+		                    ItemFood itemfood = (ItemFood)Item.itemsList[itemstack.itemID];
 
-	                    if (itemfood.isWolfsFavoriteMeat() && this.dataWatcher.getWatchableObjectFloat(18) < 20.0F)
+		                    if (itemfood.isWolfsFavoriteMeat() && this.dataWatcher.getWatchableObjectFloat(18) < 20.0F)
+		                    {
+		                        if (!par1EntityPlayer.capabilities.isCreativeMode)
+		                        {
+		                            --itemstack.stackSize;
+		                        }
+
+		                        this.heal(itemfood.getHealAmount());
+
+		                        if (itemstack.stackSize <= 0)
+		                        {
+		                            par1EntityPlayer.inventory.setInventorySlotContents(par1EntityPlayer.inventory.currentItem, (ItemStack)null);
+		                        }
+
+		                        return true;
+		                    }
+		                }
+		                else if (itemstack.itemID == SilverHawkCore.Fluorite.itemID && !this.worldObj.isRemote)
 	                    {
-	                        if (!par1EntityPlayer.capabilities.isCreativeMode)
-	                        {
-	                            --itemstack.stackSize;
-	                        }
-
-	                        this.heal(itemfood.getHealAmount());
-
-	                        if (itemstack.stackSize <= 0)
-	                        {
-	                            par1EntityPlayer.inventory.setInventorySlotContents(par1EntityPlayer.inventory.currentItem, (ItemStack)null);
-	                        }
-
-	                        return true;
+	                    	this.setTamed(false);
+	                        this.setPathToEntity((PathEntity)null);
+	                        this.setAttackTarget((EntityLiving)null);
+	                        this.aiSit.setSitting(false);
+	                        this.setHealth(20.0F);
+	                        this.playTameEffect(false);
+	                        this.worldObj.setEntityState(this, (byte)6);
 	                    }
-	                }
-	                else if (itemstack.itemID == SilverHawkCore.Fluorite.itemID && !this.worldObj.isRemote)
-                    {
-                    	this.setTamed(false);
-                        this.setPathToEntity((PathEntity)null);
-                        this.setAttackTarget((EntityLiving)null);
-                        this.aiSit.setSitting(false);
-                        this.setHealth(20.0F);
-                        this.playTameEffect(false);
-                        this.worldObj.setEntityState(this, (byte)6);
-                    }
-	            }
-	            if (par1EntityPlayer.getCommandSenderName().equalsIgnoreCase(this.getOwnerName()) &&!this.worldObj.isRemote && !this.isBreedingItem(itemstack))
-	            {
-	                this.aiSit.setSitting(!this.isSitting());
-	                this.isJumping = false;
-	                this.setPathToEntity((PathEntity)null);
-	                this.setTarget((Entity)null);
-	                this.setAttackTarget((EntityLivingBase)null);
+		            }
+		            else if (par1EntityPlayer.getCommandSenderName().equalsIgnoreCase(this.getOwnerName()) &&!this.worldObj.isRemote)
+		            {
+		                if (!par1EntityPlayer.isSneaking())
+		                {
+		                	if (this.isSitting())this.aiSit.setSitting(false);
+			                this.isJumping = false;
+			                this.setPathToEntity((PathEntity)null);
+			                this.setTarget((Entity)null);
+			                this.setAttackTarget((EntityLivingBase)null);
+		                	
+		                	par1EntityPlayer.mountEntity(this);
+		                	this.riddenByEntity = par1EntityPlayer;
+		                }
+		                else
+		                {
+		                	this.aiSit.setSitting(!this.isSitting());
+			                this.isJumping = false;
+			                this.setPathToEntity((PathEntity)null);
+			                this.setTarget((Entity)null);
+			                this.setAttackTarget((EntityLivingBase)null);
+		                }
+		            }
 	            }
 		}
 		else if (itemstack != null && itemstack.itemID == SilverHawkCore.Fluorite.itemID)
         {
             boolean k;
             String name = this.getOwnerName();
-            if (name != par1EntityPlayer.getCommandSenderName() && !par1EntityPlayer.capabilities.isCreativeMode)
+            if (!par1EntityPlayer.getCommandSenderName().equalsIgnoreCase(this.getOwnerName()) && !par1EntityPlayer.capabilities.isCreativeMode)
             {
             	--itemstack.stackSize;
             }
@@ -320,6 +379,12 @@ public class EntitySilverHawk extends EntityTameable{
 		return (float)Math.PI*f2;
 	}
 	
+	//used for check flying.
+	public boolean isCrowFlying()
+	{
+		return this.isFlying;
+	}
+	
 	//other setting
 	protected int getDropItemId()
     {
@@ -358,7 +423,7 @@ public class EntitySilverHawk extends EntityTameable{
         {
             return false;
         }
-        else if (!this.isTamed())
+        else if (!this.isTamed() || this.riddenByEntity != null)
         {
             return false;
         }
@@ -380,5 +445,60 @@ public class EntitySilverHawk extends EntityTameable{
 	}
 	
 	
+	/**
+	 * 以下は飛行で使用する部分。
+	 * 飛行の制御は、
+	 * ・Tame状態の時にスニークしながら素手右クリックで騎乗
+	 * ・騎乗すると、Entity自体はお座りAIに移行して自力で移動しなくなり、キー操作で移動するようになる。
+	 * ・ジャンプキーで飛行モード・おすわり継続
+	 * ・着地で飛行モード解除・おすわり継続
+	 * ・前進キーでプレイヤーのYaw、Pitchに従って前進*/
+	public void moveEntityWithHeading(float par1, float par2)
+    {
+        if (this.riddenByEntity != null && this.riddenByEntity instanceof EntityPlayer)
+        {
+            EntityPlayer player = (EntityPlayer) this.riddenByEntity;
+        	
+        	this.prevRotationYaw = this.rotationYaw = this.riddenByEntity.rotationYaw;
+            this.prevRotationPitch = this.rotationPitch = this.riddenByEntity.rotationPitch;
+            this.setRotation(this.rotationYaw, this.rotationPitch);
+            this.rotationYawHead = this.renderYawOffset = this.rotationYaw;
+            par1 = ((EntityLivingBase)this.riddenByEntity).moveStrafing * 0.5F;
+            par2 = ((EntityLivingBase)this.riddenByEntity).moveForward;
 
+
+            this.motionX = (double)(-MathHelper.sin(player.rotationYaw / 180.0F * (float)Math.PI) * MathHelper.cos(this.rotationPitch / 180.0F * (float)Math.PI));
+            this.motionZ = (double)(MathHelper.cos(player.rotationYaw / 180.0F * (float)Math.PI) * MathHelper.cos(this.rotationPitch / 180.0F * (float)Math.PI));
+            this.motionY = (double)(-MathHelper.sin(player.rotationPitch / 180.0F * (float)Math.PI));
+
+            this.stepHeight = 1.0F;
+            this.jumpMovementFactor = this.getAIMoveSpeed() * 1.0F;
+
+            if (!this.worldObj.isRemote)
+            {
+                this.setAIMoveSpeed((float)this.getEntityAttribute(SharedMonsterAttributes.movementSpeed).getAttributeValue());
+                super.moveEntityWithHeading(par1, par2);
+            }
+
+            double d0 = this.posX - this.prevPosX;
+            double d1 = this.posZ - this.prevPosZ;
+            float f4 = MathHelper.sqrt_double(d0 * d0 + d1 * d1) * 4.0F;
+
+            if (f4 > 1.0F)
+            {
+                f4 = 1.0F;
+            }
+        }
+        else
+        {
+            this.stepHeight = 0.5F;
+            this.jumpMovementFactor = 0.02F;
+            super.moveEntityWithHeading(par1, par2);
+        }
+    }
+	
+	public boolean shouldDismountInWater(Entity rider){
+        return false;
+    }
+	
 }

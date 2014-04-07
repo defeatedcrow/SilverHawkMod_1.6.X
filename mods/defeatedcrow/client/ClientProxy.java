@@ -4,21 +4,20 @@ import org.lwjgl.input.Keyboard;
 
 import net.minecraft.world.World;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import cpw.mods.fml.client.FMLClientHandler;
 import cpw.mods.fml.client.registry.ClientRegistry;
-import cpw.mods.fml.client.registry.KeyBindingRegistry;
 import cpw.mods.fml.client.registry.RenderingRegistry;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import mods.defeatedcrow.client.projectile.*;
 import mods.defeatedcrow.common.CommonProxy;
 //import mods.defeatedcrow.common.SHPacketHandler;
 import mods.defeatedcrow.common.SilverHawkCore;
 import mods.defeatedcrow.entity.*;
-import mods.defeatedcrow.item.ItemArmorCrow;
-import mods.defeatedcrow.item.ItemArmorSwan;
+import mods.defeatedcrow.entity.projectile.*;
+import mods.defeatedcrow.item.*;
 
 
 @SideOnly(Side.CLIENT)
@@ -48,7 +47,13 @@ public class ClientProxy extends CommonProxy {
 		RenderingRegistry.registerEntityRenderingHandler(EntityCrow.class, new RenderCBcrow(new ModelCBcrow(), 0.3F));
 		RenderingRegistry.registerEntityRenderingHandler(EntitySilverHawk.class, new RenderHawk(new ModelSilverHawk(), 0.8F));
 		RenderingRegistry.registerEntityRenderingHandler(EntitySilverChicken.class, new RenderSilverChicken(new ModelSilverChicken(), 0.8F));
+		
 		RenderingRegistry.registerBlockHandler(new RenderCDLBlock());
+		
+		RenderingRegistry.registerEntityRenderingHandler(EntityNormalGatling.class, new RenderSimpleBullet(new ModelSimpleBullet()));
+		RenderingRegistry.registerEntityRenderingHandler(EntityShortLaser.class, new RenderShortLaser(new ModelShortLaser()));
+		RenderingRegistry.registerEntityRenderingHandler(EntitySmallWave.class, new RenderSmallWave(new ModelSmallWave()));
+		RenderingRegistry.registerEntityRenderingHandler(EntityLargeWave.class, new RenderLargeWave(new ModelLargeWave()));
 	}
 	
 	@Override

@@ -5,15 +5,15 @@ import java.util.logging.Level;
 
 import org.lwjgl.input.Keyboard;
 
-
-
-//import mods.defeatedcrow.common.SHPacketHandler;
+import mods.defeatedcrow.common.SHPacketHandler;
 import mods.defeatedcrow.block.*;
 import mods.defeatedcrow.entity.*;
 import mods.defeatedcrow.entity.projectile.*;
 import mods.defeatedcrow.event.CDEventResister;
 import mods.defeatedcrow.event.NewSoundEvent;
 import mods.defeatedcrow.item.*;
+import mods.defeatedcrow.plugin.*;
+import mods.defeatedcrow.util.*;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockBreakable;
 import net.minecraft.block.material.Material;
@@ -38,12 +38,14 @@ import net.minecraftforge.common.Property;
 import net.minecraftforge.common.EnumHelper;
 import net.minecraftforge.oredict.OreDictionary;
 import cpw.mods.fml.common.FMLLog;
+import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.Mod.EventHandler;
 import cpw.mods.fml.common.Mod.Instance;
 import cpw.mods.fml.common.SidedProxy;
 import cpw.mods.fml.common.network.NetworkMod;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
+import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.registry.EntityRegistry;
 import cpw.mods.fml.common.registry.GameRegistry;
@@ -85,8 +87,12 @@ public class SilverHawkCore {
 	public static Item  armHKMet, armHKPlate, armHKLegs, armHKBoots;
 	public static Item  armSWMet, armSWPlate, armSWLegs, armSWBoots;
 	public static Item  fluoroSword;
+	public static Item  blueSword;
+	public static Item  crimsonSword;
 	public static Item  dustSilver;
 	public static Item  ingotSilver;
+	public static Item  ingotLead;
+	public static Item  flighterCore;
  
 	public int blockIdOre = 711;
 	public int blockIdFLight = 712;
@@ -95,11 +101,14 @@ public class SilverHawkCore {
 	public int blockIdGButton = 716;
 	public int blockIdGMoss = 717;
 	public int itemIdFluorite = 7011;
-	public int itemIdBegg = 7015;
-	public int itemIdBfeather = 7014;
-	public int itemIdFSword = 7016;
-	public int itemIdDustS = 7013;
-	public int itemIdingotS = 7012;
+	public int itemIdBegg = 7013;
+	public int itemIdBfeather = 7012;
+	public int itemIdFSword = 7017;
+	public int itemIdDustS = 7014;
+	public int itemIdingotS = 7015;
+	public int itemIdingotL = 7016;
+	public int itemIdBlueSword = 7018;
+	public int itemIdCrimsonSword = 7019;
 	public int armIdBFM = 7020;
 	public int armIdBFP = 7021;
 	public int armIdBFL = 7022;
@@ -112,13 +121,14 @@ public class SilverHawkCore {
 	public int armIdSWP = 7029;
 	public int armIdSWL = 7030;
 	public int armIdSWB = 7031;
-	public int entityIdCrow = 250;
-	public int entityIdSHawk = 251;
-	public int entityIdSChicken = 252;
-	public int entityIdRgray = 253;
-	public int entityIdKerberos = 254;
-	public int entityIdFireleo = 255;
-	public int entityIdToxicviper = 256;
+	public int itemIdFlighterCore = 7032;
+	public static int entityIdCrow = 250;
+	public static int entityIdSHawk = 251;
+	public static int entityIdSChicken = 252;
+	public static int entityIdRgray = 253;
+	public static int entityIdKerberos = 254;
+	public static int entityIdFireleo = 255;
+	public static int entityIdToxicviper = 256;
 	
 	//id of projectiles
 	public static int projIdShifter = 270;
@@ -133,16 +143,17 @@ public class SilverHawkCore {
 	public static boolean disableDamageForVillager = true;
 
 	public static int modelLantern;
+	
 	public static int cfgFlyKeySet = Keyboard.KEY_SPACE;
 	public static int cfgSneakKeySet = Keyboard.KEY_LSHIFT;
 	
 	public static EnumArmorMaterial enumArmorMaterialCrow;
 	public static EnumToolMaterial enumToolMaterialCrow;
+	public static EnumToolMaterial enumToolMaterialCrow2;
 	
-	//new damage sources
-	public static DamageSource normalBullet;
+	public static boolean isDebugMode = true;
 	
-	
+	public static boolean loaded_IC2 = false;
 	
 	@EventHandler
 	public void preInit(FMLPreInitializationEvent event)
@@ -163,8 +174,12 @@ public class SilverHawkCore {
 			Property itemBegg = cfg.getItem("CraftingItems", itemIdBegg);
 			Property itemBfeather = cfg.getItem("Blackfeather", itemIdBfeather);
 			Property itemFSword = cfg.getItem("FluoroSword", itemIdFSword);
+			Property itemBSword = cfg.getItem("DeepblueSword", itemIdBlueSword);
+			Property itemCSword = cfg.getItem("CrimsonSword", itemIdCrimsonSword);
 			Property itemdustS = cfg.getItem("SilverDust", itemIdDustS);
 			Property itemingotS = cfg.getItem("SilverIngot", itemIdingotS);
+			Property itemingotL = cfg.getItem("LeadIngot", itemIdingotL);
+			Property itemFlighterCore = cfg.getItem("FlighterCore", itemIdFlighterCore);
 			Property armBFmet = cfg.getItem("CrowHelmet", armIdBFM);
 			Property armBFPlate = cfg.getItem("CrowPlate", armIdBFP);
 			Property armBFLegs = cfg.getItem("CrowLeggins", armIdBFL);
@@ -178,7 +193,7 @@ public class SilverHawkCore {
 			Property armSWLegs = cfg.getItem("SwanLeggins", armIdSWL);
 			Property armSWBoots = cfg.getItem("SwanBoots", armIdSWB);
 			Property setFlyKey = cfg.get("keyCode", "FlyKey", cfgFlyKeySet, "This key is used for starting flight, and for the rise.");
-			Property setSneakKey = cfg.get("keyCode", "SneakKey", cfgSneakKeySet, "This key is used for descent in flight, and for swimming in water.");
+			Property setSneakKey = cfg.get("keyCode", "SneakKey", cfgSneakKeySet, "This key is used for swimming in water.");
 			Property entityCBCrow = cfg.get("entity", "CrowID", entityIdCrow);
 			Property entitySHawk = cfg.get("entity", "SilverHawkID", entityIdSHawk);
 			Property entitySChicken = cfg.get("entity", "SilverChickenID", entityIdSChicken);
@@ -202,8 +217,13 @@ public class SilverHawkCore {
 			itemIdBegg  = itemBegg.getInt();
 			itemIdBfeather  = itemBfeather.getInt();
 			itemIdFSword  = itemFSword.getInt();
+			itemIdBlueSword = itemBSword.getInt();
+			itemIdCrimsonSword = itemCSword.getInt();
 			itemIdDustS  = itemdustS.getInt();
 			itemIdingotS  = itemingotS.getInt();
+			itemIdingotL = itemingotL.getInt();
+			itemIdFlighterCore = itemFlighterCore.getInt();
+			
 			armIdBFM  = armBFmet.getInt();
 			armIdBFP  = armBFPlate.getInt();
 			armIdBFL  = armBFLegs.getInt();
@@ -291,14 +311,32 @@ public class SilverHawkCore {
 				setUnlocalizedName("defeatedcrow.ingotSilver").
 				setCreativeTab(SilverHawkCore.crowsdefeat);
 		
+		ingotLead  = (new ItemIngotLead(itemIdingotL - 256)).
+				setUnlocalizedName("defeatedcrow.ingotLead").
+				setCreativeTab(SilverHawkCore.crowsdefeat);
+		
+		flighterCore  = (new ItemFlighterCore(itemIdFlighterCore - 256)).
+				setUnlocalizedName("defeatedcrow.flighterCore").
+				setCreativeTab(SilverHawkCore.crowsdefeat);
+		
 		enumArmorMaterialCrow = EnumHelper.addArmorMaterial("CROW", 15, new int[]{3, 4, 5, 2}, 15);
-		enumToolMaterialCrow = EnumHelper.addToolMaterial("DCSILVER", 2, 192, 6.0F, 4.0F, 18);
+		enumToolMaterialCrow = EnumHelper.addToolMaterial("DCSILVER", 3, 192, 8.0F, 3.0F, 18);
+		enumToolMaterialCrow2 = EnumHelper.addToolMaterial("DCLEAD", 1, 127, 4.0F, 8.0F, 8);
 		enumArmorMaterialCrow.customCraftingMaterial = this.BlackFeather;
 		enumToolMaterialCrow.customCraftingMaterial = this.ingotSilver;
+		enumToolMaterialCrow2.customCraftingMaterial = this.ingotLead;
 		
 		
 		fluoroSword  = (new ItemFluoroSword(itemIdFSword - 256,enumToolMaterialCrow)).
 				setUnlocalizedName("defeatedcrow.fluorosword").
+				setCreativeTab(SilverHawkCore.crowsdefeat);
+		
+		blueSword  = (new ItemBlueSword(itemIdBlueSword - 256,enumToolMaterialCrow)).
+				setUnlocalizedName("defeatedcrow.deepbluesword").
+				setCreativeTab(SilverHawkCore.crowsdefeat);
+		
+		crimsonSword  = (new ItemCrimsonSword(itemIdCrimsonSword - 256,enumToolMaterialCrow2)).
+				setUnlocalizedName("defeatedcrow.crimsonsword").
 				setCreativeTab(SilverHawkCore.crowsdefeat);
 		
 		armBFMet  = (new ItemArmorCrow(armIdBFM - 256, enumArmorMaterialCrow, SilverHawkCore.proxy.addArmor("crowarmor"), 0)).
@@ -350,9 +388,14 @@ public class SilverHawkCore {
 		GameRegistry.registerItem(Fluorite, "defeatedcrow.fluorite");
 		GameRegistry.registerItem(BlackEgg, "defeatedcrow.materials");
 		GameRegistry.registerItem(BlackFeather, "defeatedcrow.blackfeather");
-		GameRegistry.registerItem(fluoroSword, "defeatedcrow.fluoroSword");
 		GameRegistry.registerItem(dustSilver, "defeatedcrow.silverDust");
 		GameRegistry.registerItem(ingotSilver, "defeatedcrow.silverIngot");
+		GameRegistry.registerItem(ingotLead, "defeatedcrow.leadIngot");
+		GameRegistry.registerItem(flighterCore, "defeatedcrow.flighterCore");
+		
+		GameRegistry.registerItem(fluoroSword, "defeatedcrow.fluoroSword");
+		GameRegistry.registerItem(blueSword, "defeatedcrow.deepblueSword");
+		GameRegistry.registerItem(crimsonSword, "defeatedcrow.crimsonSword");
 		
 		GameRegistry.registerItem(armBFMet, "defeatedcrow.crowHelmet");
 		GameRegistry.registerItem(armBFPlate, "defeatedcrow.crowSuits");
@@ -368,6 +411,19 @@ public class SilverHawkCore {
 		GameRegistry.registerItem(armSWPlate, "defeatedcrow.swanSuits");
 		GameRegistry.registerItem(armSWLegs, "defeatedcrow.swanLeggins");
 		GameRegistry.registerItem(armSWBoots, "defeatedcrow.swanBoots");
+		
+		
+	    //Ore Dictionary
+	    OreDictionary.registerOre("oreFluorite", new ItemStack(this.Ores, 1, 0));
+	    OreDictionary.registerOre("gemFluorite", new ItemStack(this.Fluorite, 1, 0));
+	    OreDictionary.registerOre("oreSilver", new ItemStack(this.Ores, 1, 1));
+	    OreDictionary.registerOre("ingotSilver", new ItemStack(this.ingotSilver, 1, 0));
+	    OreDictionary.registerOre("dustSilver", new ItemStack(this.dustSilver, 1, 0));
+	    OreDictionary.registerOre("oreCrocoite", new ItemStack(this.Ores, 1, 2));
+	    OreDictionary.registerOre("gemCrocoite", new ItemStack(this.Fluorite, 1, 1));
+	    OreDictionary.registerOre("ingotLead", new ItemStack(this.ingotLead, 1, 0));
+	    OreDictionary.registerOre("dustLead", new ItemStack(this.dustSilver, 1, 1));
+	    OreDictionary.registerOre("dustChrome", new ItemStack(this.dustSilver, 1, 2));
 	    
 	}
 
@@ -383,23 +439,21 @@ public class SilverHawkCore {
 	    	EntityRegistry.registerGlobalEntityID(EntityCrow.class, "crow", EntityRegistry.findGlobalUniqueEntityId(), 0x000000, 0xB000CC);
 	    }
 	    
-	    if(entityIdSHawk != 0) {
-	    	EntityRegistry.registerGlobalEntityID(EntitySilverHawk.class, "silverHawk", entityIdSHawk, 0xEEEEEE, 0xD02040);
-	    }
-	    else {
-	    	EntityRegistry.registerGlobalEntityID(EntitySilverChicken.class, "silverHawk", EntityRegistry.findGlobalUniqueEntityId(), 0xEEEEEE, 0xD02040);
-	    }
-//	    
-//	    if(entityIdSChicken != 0) {
-//	    	EntityRegistry.registerGlobalEntityID(EntitySilverChicken.class, "silverChicken", entityIdSChicken, 0xEEEEEE, 0x505050);
-//	    }
-//	    else {
-//	    	EntityRegistry.registerGlobalEntityID(EntitySilverChicken.class, "silverChicken", EntityRegistry.findGlobalUniqueEntityId(), 0xEEEEEE, 0x505050);
-//	    }
-//	      
 	    //mobs
-	    EntityRegistry.registerModEntity(EntityCrow.class, "crow", entityIdCrow, this, 250, 5, true);
-	    EntityRegistry.registerModEntity(EntitySilverHawk.class, "silverHawk", entityIdSHawk, this, 250, 5, true);
+	    if (entityIdCrow == 0){
+	    	EntityRegistry.registerModEntity(EntityCrow.class, "crow", EntityRegistry.findGlobalUniqueEntityId(), this, 250, 5, true);
+	    }
+	    else{
+	    	EntityRegistry.registerModEntity(EntityCrow.class, "crow", entityIdCrow, this, 250, 5, true);
+	    }
+	    
+	    if (entityIdSHawk == 0){
+	    	EntityRegistry.registerModEntity(EntitySilverHawk.class, "silverHawk", EntityRegistry.findGlobalUniqueEntityId(), this, 250, 5, true);
+	    }
+	    else{
+	    	EntityRegistry.registerModEntity(EntitySilverHawk.class, "silverHawk", entityIdSHawk, this, 250, 5, true);
+	    }
+	    
 //	    EntityRegistry.registerModEntity(EntitySilverChicken.class, "silverChicken", entityIdSChicken, this, 250, 5, true);
 	    
 	    //proj
@@ -417,7 +471,13 @@ public class SilverHawkCore {
 	    proxy.registerRenderers();
 	      
 	    LanguageRegistry.instance().addStringLocalization("entity.crow.name", "en_US", "Crow");
-	    LanguageRegistry.instance().addStringLocalization("entity.crow.name", "en_JP", "カラス");
+	    LanguageRegistry.instance().addStringLocalization("entity.crow.name", "ja_JP", "カラス");
+	    
+	    LanguageRegistry.instance().addStringLocalization("entity.silverHawk.name", "en_US", "Silver Hawk");
+	    LanguageRegistry.instance().addStringLocalization("entity.silverHawk.name", "ja_JP", "シルバーホーク");
+	    
+	    LanguageRegistry.instance().addStringLocalization("entity.silverChicken.name", "en_US", "Silver Chicken");
+	    LanguageRegistry.instance().addStringLocalization("entity.silverChicken.name", "ja_JP", "ギンケイ");
 	      
 	      
 	    //Registering recipe
@@ -440,13 +500,28 @@ public class SilverHawkCore {
 	    	(new AddChestGen()).addChestItems();
 	    }
 	      
-	    //Ore Dictionary
-	    OreDictionary.registerOre("oreFluorite", new ItemStack(this.Ores, 1, 0));
-	    OreDictionary.registerOre("gemFluorite", new ItemStack(this.Fluorite, 1, 0));
-	    OreDictionary.registerOre("oreSilver", new ItemStack(this.Ores, 1, 1));
-	    OreDictionary.registerOre("ingotSilver", new ItemStack(this.ingotSilver, 1, 0));
-	    OreDictionary.registerOre("dustSilver", new ItemStack(this.dustSilver, 1, 0));
 		
+	}
+	
+	@EventHandler
+    public void postInit(FMLPostInitializationEvent event) {
+		
+		(new EvolutionList()).registerEvol();
+		
+		if (Loader.isModLoaded("IC2"))
+	    {
+	    	SHLogger.loadingModInfo("IC2");
+	    	try
+	        {
+	          this.loaded_IC2 = true;
+	          (new IC2Plugin()).load();
+	          SHLogger.loadedModInfo("IC2");
+	        }
+	        catch (Exception e) {
+	        	SHLogger.failLoadingModInfo("IC2");
+	          e.printStackTrace(System.err);
+	        }
+	    }
 	}
 
 }

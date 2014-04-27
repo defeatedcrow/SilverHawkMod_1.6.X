@@ -6,29 +6,32 @@ import cpw.mods.fml.common.ITickHandler;
 import cpw.mods.fml.common.TickType;
 
 public class SHTickHandler implements ITickHandler{
+	
+	private final EnumSet<TickType> tickSet;
+	
+	public SHTickHandler(EnumSet<TickType> tickType)
+	{
+		this.tickSet = tickType;
+	}
 
 	@Override
-	public void tickStart(EnumSet<TickType> type, Object... tickData) {
-		// TODO 自動生成されたメソッド・スタブ
+	public void tickStart(EnumSet<TickType> type, Object... tickData) {}
+
+	@Override
+	public void tickEnd(EnumSet<TickType> type, Object... tickData)
+	{
 		
 	}
 
 	@Override
-	public void tickEnd(EnumSet<TickType> type, Object... tickData) {
-		// TODO 自動生成されたメソッド・スタブ
-		
-	}
-
-	@Override
-	public EnumSet<TickType> ticks() {
-		// TODO 自動生成されたメソッド・スタブ
-		return null;
+	public EnumSet<TickType> ticks()
+	{
+		return this.tickSet;
 	}
 
 	@Override
 	public String getLabel() {
-		// TODO 自動生成されたメソッド・スタブ
-		return null;
+		return "SilverHawkServer";
 	}
 
 }

@@ -26,7 +26,7 @@ import net.minecraft.util.MathHelper;
 import net.minecraft.world.World;
 
 
-public class EntitySilverHawk extends EntityTameable{
+public class EntitySilverHawk extends EntityTameable implements IEntityFlighter{
 	
 	/**羽ばたいたりするモーションに使う*/
 	public float wingA = 0.0F;
@@ -42,7 +42,6 @@ public class EntitySilverHawk extends EntityTameable{
      * いずれにしてもイキモノ・騎乗者共に落下ダメージはない。*/
     protected boolean isFlying;
     protected boolean flyKeyDown;
-    protected boolean sneakKeyDown;
     
     
     
@@ -67,7 +66,6 @@ public class EntitySilverHawk extends EntityTameable{
         this.targetTasks.addTask(1, new EntityAIOwnerHurtByTarget(this));
         this.targetTasks.addTask(2, new EntityAIOwnerHurtTarget(this));
         this.targetTasks.addTask(3, new EntityAIHurtByTarget(this, true));
-        this.targetTasks.addTask(4, new EntityAITargetNonTamed(this, EntityZombie.class, 100, false));
         this.setTamed(false);
 	}
 
@@ -235,20 +233,71 @@ public class EntitySilverHawk extends EntityTameable{
 			this.isFlying = false;
 		}
 		
-		if (this.getFlyKeyDown())
-		{
-			this.motionY += 0.10F;
-		}
-		
 		if (this.isInWater() && !this.worldObj.isRemote)
 		{
 			PotionEffect potion = new PotionEffect(Potion.waterBreathing.id, 100, 0);
-			this.addPotionEffect(potion);
+			PotionEffect current1 = this.getActivePotionEffect(Potion.waterBreathing);
+			if (current1 == null)
+			{
+				this.addPotionEffect(potion);
+			}
 			this.motionY += 0.035F;
 			
 			if (this.riddenByEntity != null && this.riddenByEntity instanceof EntityLivingBase)
 			{
-				((EntityLivingBase)this.riddenByEntity).addPotionEffect(potion);
+				EntityLivingBase rider = (EntityLivingBase) this.riddenByEntity;
+				PotionEffect current2 = rider.getActivePotionEffect(Potion.waterBreathing);
+				if (current2 == null)
+				{
+					rider.addPotionEffect(potion);
+				}
+			}
+		}
+		
+		//以下、動作関係
+		if (this.riddenByEntity != null && this.riddenByEntity instanceof EntityPlayer)
+		{
+			EntityPlayer player = (EntityPlayer) this.riddenByEntity;
+			float f = player.moveForward;
+			
+			if (f > 0.0F)
+			{
+				this.prevRotationYaw = this.rotationYaw = this.riddenByEntity.rotationYaw;
+	            this.prevRotationPitch = this.rotationPitch = this.riddenByEntity.rotationPitch;
+	            this.setRotation(this.rotationYaw, this.rotationPitch);
+	            this.rotationYawHead = this.renderYawOffset = this.rotationYaw;
+	
+	            //以下、ボートの動作の真似をしている
+	            double dx = (double)(-MathHelper.sin(player.rotationYaw / 180.0F * (float)Math.PI) * MathHelper.cos(this.rotationPitch / 180.0F * (float)Math.PI));
+	            double dz = (double)(MathHelper.cos(player.rotationYaw / 180.0F * (float)Math.PI) * MathHelper.cos(this.rotationPitch / 180.0F * (float)Math.PI));
+	            double dy = (double)(-MathHelper.sin(player.rotationPitch / 180.0F * (float)Math.PI));
+	
+	            this.motionX += dx * 0.05D;
+	        	this.motionZ += dz * 0.05D;
+	        	this.motionY += dy * 0.35D + 0.05D;
+	        	this.stepHeight = 1.0F;
+	        	
+	        	double d1 = Math.sqrt(this.motionX*this.motionX + this.motionZ*this.motionZ);
+	        	
+	        	if (d1 > 1.5D)
+	            {
+	            	double limit = 1.5D / d1;
+	            	this.motionX *= limit;
+	            	this.motionZ *= limit;
+	                d1 = 1.5D;
+	            }
+	            else if (d1 < 0.5D)
+	            {
+	            	this.motionX = dx * 0.5D;
+		        	this.motionZ = dz * 0.5D;
+		        	this.motionY = dy * 0.35D;
+	            }
+	        	
+			}
+			else
+			{
+				this.motionY *= 0.25D;
+				this.stepHeight = 0.5F;
 			}
 		}
 		
@@ -309,12 +358,16 @@ public class EntitySilverHawk extends EntityTameable{
 	                        this.playTameEffect(false);
 	                        this.worldObj.setEntityState(this, (byte)6);
 	                    }
+		                else
+		                {
+		                	return false;
+		                }
 		            }
 		            else if (par1EntityPlayer.getCommandSenderName().equalsIgnoreCase(this.getOwnerName()) &&!this.worldObj.isRemote)
 		            {
 		                if (!par1EntityPlayer.isSneaking())
 		                {
-		                	if (this.isSitting())this.aiSit.setSitting(false);
+		                	this.aiSit.setSitting(true);
 			                this.isJumping = false;
 			                this.setPathToEntity((PathEntity)null);
 			                this.setTarget((Entity)null);
@@ -444,61 +497,13 @@ public class EntitySilverHawk extends EntityTameable{
 		return this.spawnBabyAnimal(entityageable);
 	}
 	
-	
-	/**
-	 * 以下は飛行で使用する部分。
-	 * 飛行の制御は、
-	 * ・Tame状態の時にスニークしながら素手右クリックで騎乗
-	 * ・騎乗すると、Entity自体はお座りAIに移行して自力で移動しなくなり、キー操作で移動するようになる。
-	 * ・ジャンプキーで飛行モード・おすわり継続
-	 * ・着地で飛行モード解除・おすわり継続
-	 * ・前進キーでプレイヤーのYaw、Pitchに従って前進*/
-	public void moveEntityWithHeading(float par1, float par2)
-    {
-        if (this.riddenByEntity != null && this.riddenByEntity instanceof EntityPlayer)
-        {
-            EntityPlayer player = (EntityPlayer) this.riddenByEntity;
-        	
-        	this.prevRotationYaw = this.rotationYaw = this.riddenByEntity.rotationYaw;
-            this.prevRotationPitch = this.rotationPitch = this.riddenByEntity.rotationPitch;
-            this.setRotation(this.rotationYaw, this.rotationPitch);
-            this.rotationYawHead = this.renderYawOffset = this.rotationYaw;
-            par1 = ((EntityLivingBase)this.riddenByEntity).moveStrafing * 0.5F;
-            par2 = ((EntityLivingBase)this.riddenByEntity).moveForward;
-
-
-            this.motionX = (double)(-MathHelper.sin(player.rotationYaw / 180.0F * (float)Math.PI) * MathHelper.cos(this.rotationPitch / 180.0F * (float)Math.PI));
-            this.motionZ = (double)(MathHelper.cos(player.rotationYaw / 180.0F * (float)Math.PI) * MathHelper.cos(this.rotationPitch / 180.0F * (float)Math.PI));
-            this.motionY = (double)(-MathHelper.sin(player.rotationPitch / 180.0F * (float)Math.PI));
-
-            this.stepHeight = 1.0F;
-            this.jumpMovementFactor = this.getAIMoveSpeed() * 1.0F;
-
-            if (!this.worldObj.isRemote)
-            {
-                this.setAIMoveSpeed((float)this.getEntityAttribute(SharedMonsterAttributes.movementSpeed).getAttributeValue());
-                super.moveEntityWithHeading(par1, par2);
-            }
-
-            double d0 = this.posX - this.prevPosX;
-            double d1 = this.posZ - this.prevPosZ;
-            float f4 = MathHelper.sqrt_double(d0 * d0 + d1 * d1) * 4.0F;
-
-            if (f4 > 1.0F)
-            {
-                f4 = 1.0F;
-            }
-        }
-        else
-        {
-            this.stepHeight = 0.5F;
-            this.jumpMovementFactor = 0.02F;
-            super.moveEntityWithHeading(par1, par2);
-        }
-    }
-	
 	public boolean shouldDismountInWater(Entity rider){
         return false;
     }
+
+	@Override
+	public EnumFlighterType thisType() {
+		return EnumFlighterType.SILVER_HAWK;
+	}
 	
 }

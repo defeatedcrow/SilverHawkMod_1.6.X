@@ -13,6 +13,7 @@ public class CDEventResister {
 	public CDEventResister()
 	{
 		events.add(new PlateSWEvent());
+		events.add(new AttackWithSwordEvent());
 	}
 	
 	public void registerEvent()

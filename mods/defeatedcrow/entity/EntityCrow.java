@@ -265,8 +265,12 @@ public class EntityCrow extends EntityTameable{
                         this.playTameEffect(false);
                         this.worldObj.setEntityState(this, (byte)6);
                     }
+	                else
+	                {
+	                	return false;
+	                }
 	            }
-	            if (par1EntityPlayer.getCommandSenderName().equalsIgnoreCase(this.getOwnerName()) &&!this.worldObj.isRemote && !this.isBreedingItem(itemstack))
+	            if (par1EntityPlayer.getCommandSenderName().equalsIgnoreCase(this.getOwnerName()) &&!this.worldObj.isRemote)
 	            {
 	                this.aiSit.setSitting(!this.isSitting());
 	                this.isJumping = false;

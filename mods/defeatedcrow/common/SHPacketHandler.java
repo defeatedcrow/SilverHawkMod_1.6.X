@@ -4,15 +4,19 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.util.Random;
 
 import com.google.common.io.ByteArrayDataInput;
 import com.google.common.io.ByteStreams;
 
 import mods.defeatedcrow.common.SilverHawkCore;
 import mods.defeatedcrow.entity.EntitySilverHawk;
+import mods.defeatedcrow.entity.projectile.*;
 import mods.defeatedcrow.item.ItemArmorCrow;
 import net.minecraft.client.entity.EntityPlayerSP;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.INetworkManager;
 import net.minecraft.network.packet.Packet;
@@ -25,100 +29,68 @@ import cpw.mods.fml.common.network.Player;
 
 public class SHPacketHandler implements IPacketHandler
 {
+	private Random rand;
+	
         @Override
         public void onPacketData(INetworkManager manager, Packet250CustomPayload packet, Player player)
         {
             if (packet.channel.equals("FlyKey")) {
     			ByteArrayDataInput bis = ByteStreams.newDataInput(packet.data);
     			
-                boolean keydown = bis.readBoolean();
+    			int xCood = bis.readInt();
+    			int yCood = bis.readInt();
+    			int zCood = bis.readInt();
+    			byte type = bis.readByte();
                 
-                World world = SilverHawkCore.proxy.getClientWorld();
-				if (world == null) {
-					world = ((EntityPlayer) player).worldObj;
-				}
+                boolean isServer = false;
+                EntityPlayerMP thisPlayer = (EntityPlayerMP) player;
+                World world = thisPlayer.worldObj;
+//                World world = SilverHawkCore.proxy.getClientWorld();
+//				if (world == null) {
+//					world = thisPlayer.worldObj;
+//					isServer = true;
+//				}
 				
-				if (player != null && (player instanceof EntityPlayer) 
-						&& ((EntityPlayer)player).ridingEntity != null)
+				if (world != null)
 				{
-					if ((((EntityPlayer)player).ridingEntity instanceof EntitySilverHawk))
+					switch (type)
 					{
-						EntitySilverHawk hawk = (EntitySilverHawk) ((EntityPlayer)player).ridingEntity;
-						hawk.setFlyKeyDown(keydown);
+					case 1://白玉
+						EntityNormalGatling ball = new EntityNormalGatling(world, thisPlayer, (EntityLivingBase)null, 2.5F, 1.0F, 0.0F, 0.0F, -1.0F);
+						world.spawnEntityInWorld(ball);
+						world.playSoundEffect(thisPlayer.posX + 0.5D, thisPlayer.posY - 0.5D, thisPlayer.posZ + 0.5D, "random.pop", 1.0F, 1.8F);
+						break;
+					case 2://レーザー
+						EntityShortLaser laser = new EntityShortLaser(world, thisPlayer, (EntityLivingBase)null, 2.5F, 1.0F, 0.0F, 0.0F, -1.0F);
+						world.spawnEntityInWorld(laser);
+						world.playSoundEffect(thisPlayer.posX + 0.5D, thisPlayer.posY - 0.5D, thisPlayer.posZ + 0.5D, "random.pop", 1.0F, 1.8F);
+						break;
+					case 3://緑ウェーブ
+						EntitySmallWave wave = new EntitySmallWave(world, thisPlayer, (EntityLivingBase)null, 2.5F, 1.0F, 0.0F, 0.0F, -1.0F);
+						world.spawnEntityInWorld(wave);
+						world.playSoundEffect(thisPlayer.posX + 0.5D, thisPlayer.posY - 0.5D, thisPlayer.posZ + 0.5D, "random.pop", 1.0F, 1.8F);
+						break;
+					case 4://赤ウェーブ＋白玉
+						EntityLargeWave largeWave = new EntityLargeWave(world, thisPlayer, (EntityLivingBase)null, 2.5F, 1.0F, 0.0F, 0.0F, -1.0F);
+						EntityNormalGatling ball2 = new EntityNormalGatling(world, thisPlayer, (EntityLivingBase)null, 2.5F, 1.0F, 1.0F, 0.0F, -1.0F);
+						EntityNormalGatling ball3 = new EntityNormalGatling(world, thisPlayer, (EntityLivingBase)null, 2.5F, 1.0F, -1.0F, 0.0F, -1.0F);
+						world.spawnEntityInWorld(largeWave);
+						world.spawnEntityInWorld(ball2);
+						world.spawnEntityInWorld(ball3);
+						world.playSoundEffect(thisPlayer.posX + 0.5D, thisPlayer.posY - 0.5D, thisPlayer.posZ + 0.5D, "random.pop", 1.0F, 1.8F);
+						break;
+					case 5:
+						break;
+					case 6:
+						break;
+					case 7:
+						break;
+					default:
+						break;
 					}
 				}
 
-                
             }
-//            else if (packet.channel.equals("SneakKey")) {
-//    			ByteArrayDataInput bis = ByteStreams.newDataInput(packet.data);
-//    			
-//    			boolean keydown = bis.readBoolean();
-//                
-//                World world = SilverHawkCore.proxy.getClientWorld();
-//				if (world == null) {
-//					world = ((EntityPlayer) player).worldObj;
-//				}
-//				
-//				if (player != null && (player instanceof EntityPlayer) 
-//						&& ((EntityPlayer)player).inventory.armorItemInSlot(1) != null) {
-//					if ((((EntityPlayer)player).inventory.armorItemInSlot(1).getItem() instanceof ItemArmorCrow)) {
-//						ItemArmorCrow.setFlyKey(keydown);
-//					}
-//				}
-//
-//                
-//            } 
         }
-
-        public static Packet getFlyKeyPacket(boolean key)
-        {
-                ByteArrayOutputStream bos = new ByteArrayOutputStream();
-                DataOutputStream dos = new DataOutputStream(bos);
-
-                boolean keydown = false;
-
-                try
-                {
-                        dos.writeBoolean(key);
-                }
-                catch(Exception e)
-                {
-                        e.printStackTrace();
-                }
-
-                Packet250CustomPayload packet = new Packet250CustomPayload();
-                packet.channel = "FlyKey";
-                packet.data = bos.toByteArray();
-                packet.length = bos.size();
-                packet.isChunkDataPacket = true;
-
-                return packet;
-        }
-        
-//        public static Packet getSneakKeyPacket(EntityPlayer player, boolean key)
-//        {
-//        	ByteArrayOutputStream bos = new ByteArrayOutputStream();
-//            DataOutputStream dos = new DataOutputStream(bos);
-//
-//            boolean keydown = false;
-//
-//            try
-//            {
-//                    dos.writeBoolean(key);
-//            }
-//            catch(Exception e)
-//            {
-//                    e.printStackTrace();
-//            }
-//
-//            Packet250CustomPayload packet = new Packet250CustomPayload();
-//            packet.channel = "SneakKey";
-//            packet.data = bos.toByteArray();
-//            packet.length = bos.size();
-//            packet.isChunkDataPacket = true;
-//
-//            return packet;
-//        }
 
 }

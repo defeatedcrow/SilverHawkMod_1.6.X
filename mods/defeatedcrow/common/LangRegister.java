@@ -9,9 +9,10 @@ public class LangRegister {
 	{
 		LanguageRegistry.addName(new ItemStack(SilverHawkCore.Ores, 1, 0), "Fluorite Ore");
 		LanguageRegistry.instance().addNameForObject(new ItemStack(SilverHawkCore.Ores, 1, 0), "ja_JP", "フローライト鉱石");
-		
 		LanguageRegistry.addName(new ItemStack(SilverHawkCore.Ores, 1, 1), "Silver Ore");
 		LanguageRegistry.instance().addNameForObject(new ItemStack(SilverHawkCore.Ores, 1, 1), "ja_JP", "銀鉱石");
+		LanguageRegistry.addName(new ItemStack(SilverHawkCore.Ores, 1, 2), "Crocoite Ore");
+		LanguageRegistry.instance().addNameForObject(new ItemStack(SilverHawkCore.Ores, 1, 2), "ja_JP", "紅鉛鉱石");
  
 		LanguageRegistry.addName(SilverHawkCore.FluoriteLight, "Fluorite Light");
 		LanguageRegistry.instance().addNameForObject(SilverHawkCore.FluoriteLight, "ja_JP", "蛍石ランプ");
@@ -28,14 +29,23 @@ public class LangRegister {
 		LanguageRegistry.addName(SilverHawkCore.GlowMoss, "Glowing Moss");
 		LanguageRegistry.instance().addNameForObject(SilverHawkCore.GlowMoss, "ja_JP", "ヒカリゴケ");
 		
-		LanguageRegistry.addName(SilverHawkCore.Fluorite, "Fluorite");
-		LanguageRegistry.instance().addNameForObject(SilverHawkCore.Fluorite, "ja_JP", "フローライト");
+		LanguageRegistry.addName(new ItemStack(SilverHawkCore.Fluorite, 1, 0), "Fluorite");
+		LanguageRegistry.instance().addNameForObject(new ItemStack(SilverHawkCore.Fluorite, 1, 0), "ja_JP", "フローライト");
+		LanguageRegistry.addName(new ItemStack(SilverHawkCore.Fluorite, 1, 1), "Croroite");
+		LanguageRegistry.instance().addNameForObject(new ItemStack(SilverHawkCore.Fluorite, 1, 1), "ja_JP", "クロコアイト");
  
-		LanguageRegistry.addName(SilverHawkCore.dustSilver, "Silver Dust");
-		LanguageRegistry.instance().addNameForObject(SilverHawkCore.dustSilver, "ja_JP", "銀の粉末");
+		LanguageRegistry.addName(new ItemStack(SilverHawkCore.dustSilver, 1, 0), "Silver Dust");
+		LanguageRegistry.instance().addNameForObject(new ItemStack(SilverHawkCore.dustSilver, 1, 0), "ja_JP", "銀の粉末");
+		LanguageRegistry.addName(new ItemStack(SilverHawkCore.dustSilver, 1, 1), "Lead Dust");
+		LanguageRegistry.instance().addNameForObject(new ItemStack(SilverHawkCore.dustSilver, 1, 1), "ja_JP", "鉛の粉末");
+		LanguageRegistry.addName(new ItemStack(SilverHawkCore.dustSilver, 1, 2), "ChromeVI Dust");
+		LanguageRegistry.instance().addNameForObject(new ItemStack(SilverHawkCore.dustSilver, 1, 2), "ja_JP", "六価クロムの粉末");
 		
 		LanguageRegistry.addName(SilverHawkCore.ingotSilver, "Silver Ingot");
 		LanguageRegistry.instance().addNameForObject(SilverHawkCore.ingotSilver, "ja_JP", "銀インゴット");
+		
+		LanguageRegistry.addName(SilverHawkCore.ingotLead, "Lead Ingot");
+		LanguageRegistry.instance().addNameForObject(SilverHawkCore.ingotLead, "ja_JP", "鉛インゴット");
 		
 		LanguageRegistry.addName(new ItemStack(SilverHawkCore.BlackEgg, 1, 0), "Black Egg");
 		LanguageRegistry.instance().addNameForObject(new ItemStack(SilverHawkCore.BlackEgg, 1, 0), "ja_JP", "黒色たまご");
@@ -43,6 +53,11 @@ public class LangRegister {
 		LanguageRegistry.instance().addNameForObject(new ItemStack(SilverHawkCore.BlackEgg, 1, 1), "ja_JP", "鷹の目");
 		LanguageRegistry.addName(new ItemStack(SilverHawkCore.BlackEgg, 1, 2), "Freezingeye");
 		LanguageRegistry.instance().addNameForObject(new ItemStack(SilverHawkCore.BlackEgg, 1, 2), "ja_JP", "氷の目");
+		LanguageRegistry.addName(new ItemStack(SilverHawkCore.BlackEgg, 1, 3), "Crimsoneye");
+		LanguageRegistry.instance().addNameForObject(new ItemStack(SilverHawkCore.BlackEgg, 1, 3), "ja_JP", "紅色の目");
+		
+		LanguageRegistry.addName(new ItemStack(SilverHawkCore.flighterCore, 1, 0), "Blackhole Core");
+		LanguageRegistry.instance().addNameForObject(new ItemStack(SilverHawkCore.flighterCore, 1, 0), "ja_JP", "ブラックホールコア");
  
 		LanguageRegistry.addName(SilverHawkCore.BlackFeather, "Black Feather");
 		LanguageRegistry.instance().addNameForObject(SilverHawkCore.BlackFeather, "ja_JP", "カラスの羽根");
@@ -85,6 +100,12 @@ public class LangRegister {
 		
 		LanguageRegistry.addName(SilverHawkCore.fluoroSword, "Crow Katana");
 		LanguageRegistry.instance().addNameForObject(SilverHawkCore.fluoroSword, "ja_JP", "カラスの脇差");
+		
+		LanguageRegistry.addName(SilverHawkCore.blueSword, "Deepblue Sword");
+		LanguageRegistry.instance().addNameForObject(SilverHawkCore.blueSword, "ja_JP", "群青の剣");
+		
+		LanguageRegistry.addName(SilverHawkCore.crimsonSword, "Crimson Sword");
+		LanguageRegistry.instance().addNameForObject(SilverHawkCore.crimsonSword, "ja_JP", "緋色の剣");
 		
 		//DamageSource
 		LanguageRegistry.instance().addStringLocalization("DCsGatling.name", "Bullet");

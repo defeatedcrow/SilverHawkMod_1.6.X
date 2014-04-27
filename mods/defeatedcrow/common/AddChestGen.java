@@ -15,8 +15,10 @@ public class AddChestGen {
 			ChestGenHooks dungeon = ChestGenHooks.getInfo(category);
 			
 			dungeon.addItem(new WeightedRandomChestContent(new ItemStack(SilverHawkCore.BlackFeather),1,8,10));
-			dungeon.addItem(new WeightedRandomChestContent(new ItemStack(SilverHawkCore.Fluorite),1,8,20));
+			dungeon.addItem(new WeightedRandomChestContent(new ItemStack(SilverHawkCore.Fluorite, 1, 0),1,8,20));
+			dungeon.addItem(new WeightedRandomChestContent(new ItemStack(SilverHawkCore.Fluorite, 1, 1),1,2,5));
 			dungeon.addItem(new WeightedRandomChestContent(new ItemStack(SilverHawkCore.ingotSilver),1,4,10));
+			dungeon.addItem(new WeightedRandomChestContent(new ItemStack(SilverHawkCore.ingotLead),1,2,5));
 		}
 		
 		ChestGenHooks dungeon = ChestGenHooks.getInfo("dungeonChest");

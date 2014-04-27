@@ -2,6 +2,7 @@ package mods.defeatedcrow.common;
 
 import java.util.Random;
 
+import net.minecraft.block.Block;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.IChunkProvider;
 import net.minecraft.world.gen.feature.WorldGenMinable;
@@ -27,7 +28,7 @@ public class GeneratingFOre implements IWorldGenerator {
     				int randomPosX = chunk2X + random.nextInt(16);
     				int randomPosY = random.nextInt(30);
     				int randomPosZ = chunk2Z + random.nextInt(16);
-    				(new WorldGenMinable(SilverHawkCore.Ores.blockID, 4, 0)).generate(world, random, randomPosX, randomPosY, randomPosZ);
+    				(new WorldGenMinable(SilverHawkCore.Ores.blockID, 0, 6, Block.stone.blockID)).generate(world, random, randomPosX, randomPosY, randomPosZ);
     			}
     	    	
     	    	for(int j = 0; j < 5; j++)
@@ -35,7 +36,23 @@ public class GeneratingFOre implements IWorldGenerator {
     				int randomPosX = chunk2X + random.nextInt(16);
     				int randomPosY = random.nextInt(30);
     				int randomPosZ = chunk2Z + random.nextInt(16);
-    				(new WorldGenMinable(SilverHawkCore.Ores.blockID, 4, 1)).generate(world, random, randomPosX, randomPosY, randomPosZ);
+    				(new WorldGenMinable(SilverHawkCore.Ores.blockID, 1, 5, Block.stone.blockID)).generate(world, random, randomPosX, randomPosY, randomPosZ);
+    			}
+    	    	
+    	    	for(int j = 0; j < 3; j++)
+    			{
+    				int randomPosX = chunk2X + random.nextInt(16);
+    				int randomPosY = random.nextInt(40);
+    				int randomPosZ = chunk2Z + random.nextInt(16);
+    				(new WorldGenMinable(SilverHawkCore.Ores.blockID, 2, 1, Block.stone.blockID)).generate(world, random, randomPosX, randomPosY, randomPosZ);
+    			}
+    	    	
+    	    	for(int j = 0; j < 3; j++)
+    			{
+    				int randomPosX = chunk2X + random.nextInt(16);
+    				int randomPosY = random.nextInt(20);
+    				int randomPosZ = chunk2Z + random.nextInt(16);
+    				(new WorldGenMinable(SilverHawkCore.Ores.blockID, 2, 5, Block.stone.blockID)).generate(world, random, randomPosX, randomPosY, randomPosZ);
     			}
     	}
 

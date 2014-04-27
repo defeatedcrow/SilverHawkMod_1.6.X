@@ -5,7 +5,7 @@ import net.minecraft.item.ItemStack;
 
 public class ItemOreFluorite extends ItemBlock{
 	
-	private static final String[] boxItemType = new String[] {"_fluorite", "_silver"};
+	private static final String[] boxItemType = new String[] {"_fluorite", "_silver", "_crocoite"};
 	
 	public ItemOreFluorite(int itemId)
 	{
@@ -18,7 +18,7 @@ public class ItemOreFluorite extends ItemBlock{
 	public String getUnlocalizedName(ItemStack par1ItemStack)
 	{
 		int m = (par1ItemStack.getItemDamage());
-		if (m < 2) return super.getUnlocalizedName() + boxItemType[m];
+		if (m < 3) return super.getUnlocalizedName() + boxItemType[m];
 		else return super.getUnlocalizedName() + m;
 	}
 	

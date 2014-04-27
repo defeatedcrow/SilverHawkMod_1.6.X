@@ -196,7 +196,7 @@ public class ModelSilverHawk extends ModelBase {
         this.tail.rotateAngleY = 0.0F;
         this.body.rotateAngleX = ((float)Math.PI / 2F);
         this.leg1.rotateAngleX = MathHelper.cos(f1 * 0.6662F) * 1.4F * f1;
-        this.leg2.rotateAngleX = MathHelper.cos(f1 * 0.6662F + (float)Math.PI) * 1.4F * f1;
+        this.leg2.rotateAngleX = MathHelper.cos(f1 * 0.6662F) * 1.4F * f1;// + (float)Math.PI
     }
 
 }

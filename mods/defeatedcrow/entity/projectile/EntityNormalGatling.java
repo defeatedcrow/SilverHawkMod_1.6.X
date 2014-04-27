@@ -49,26 +49,27 @@ public class EntityNormalGatling extends Entity implements IProjectile{
     public int arrowShake;
     
     /** ダメージの大きさ */
-    private double damage = 2.0D;
+    protected double damage = 2.0D;
     
     /** ターゲットのエンティティ */
     public Entity targetEntity;
 
     /** ノックバックの大きさ */
-    private int knockbackStrength;
+    private int knockbackStrength = 0;
 
     public EntityNormalGatling(World par1World)
     {
         super(par1World);
         this.renderDistanceWeight = 10.0D;
         this.setSize(0.2F, 0.2F);
+        this.damage = 1.5D;
     }
     
     /** 恐らくメインで使用する定義用メソッド。他は順次消したい。
      * @param par1World this :world
      * @param par2EntityLivingBase :owner of this
      * @param par3EntityLivingBase :target of this*/
-    public EntityNormalGatling(World par1World, EntityLivingBase par2EntityLivingBase, EntityLivingBase par3EntityLivingBase, float speed, float speed2, float ajustX, float ajustZ)
+    public EntityNormalGatling(World par1World, EntityLivingBase par2EntityLivingBase, EntityLivingBase par3EntityLivingBase, float speed, float speed2, float ajustX, float ajustZ, float ajustY)
     {
     	super(par1World);
         this.renderDistanceWeight = 10.0D;
@@ -83,11 +84,11 @@ public class EntityNormalGatling extends Entity implements IProjectile{
         this.setLocationAndAngles(par2EntityLivingBase.posX, par2EntityLivingBase.posY + (double)par2EntityLivingBase.getEyeHeight(), par2EntityLivingBase.posZ, yaw, pitch);
         
         //位置の調整
-        this.posX -= (double)(MathHelper.cos(this.rotationYaw / 180.0F * (float)Math.PI) * ajustZ)
-        		+ (double)(MathHelper.sin(this.rotationYaw / 180.0F * (float)Math.PI) * ajustX);
-        this.posY -= 0.13000000149011612D;
-        this.posZ -= (double)(MathHelper.sin(this.rotationYaw / 180.0F * (float)Math.PI) * ajustZ)
-        		+ (double)(MathHelper.cos(this.rotationYaw / 180.0F * (float)Math.PI) * ajustX);
+        this.posX += -(double)(MathHelper.sin(this.rotationYaw / 180.0F * (float)Math.PI) * (1.0F + ajustZ))
+        		- (double)(MathHelper.cos(this.rotationYaw / 180.0F * (float)Math.PI) * ajustX);
+        this.posY += 0.05000000149011612D + ajustY;
+        this.posZ += (double)(MathHelper.cos(this.rotationYaw / 180.0F * (float)Math.PI) * (1.0F + ajustZ))
+        		- (double)(MathHelper.sin(this.rotationYaw / 180.0F * (float)Math.PI) * ajustX);
         this.setPosition(this.posX, this.posY, this.posZ);
         
         //初速度
@@ -319,13 +320,13 @@ public class EntityNormalGatling extends Entity implements IProjectile{
                 {
                     f2 = MathHelper.sqrt_double(this.motionX * this.motionX + this.motionY * this.motionY + this.motionZ * this.motionZ);
                     int i1 = MathHelper.ceiling_double_int((double)f2 * this.damage);
-                    i1 += this.rand.nextInt(i1 / 2 + 2);
+                    i1 += this.rand.nextInt(i1 / 4);
 
                     DamageSource damagesource = null;
 
-                    if (this.shootingEntity == null)
+                    if (this.shootingEntity != null)
                     {
-                        damagesource = DCsDamageSource.NormalGutling(this.shootingEntity);
+                        damagesource = this.thisDamageSource(this.shootingEntity);
                     }
                     else
                     {
@@ -351,6 +352,10 @@ public class EntityNormalGatling extends Entity implements IProjectile{
                                 {
                                     movingobjectposition.entityHit.addVelocity(this.motionX * (double)this.knockbackStrength * 0.6000000238418579D / (double)f3, 0.1D, this.motionZ * (double)this.knockbackStrength * 0.6000000238418579D / (double)f3);
                                 }
+                            }
+                            else
+                            {
+                            	movingobjectposition.entityHit.hurtResistantTime = 0;
                             }
 
                             if (this.shootingEntity != null)
@@ -517,7 +522,7 @@ public class EntityNormalGatling extends Entity implements IProjectile{
     @SideOnly(Side.CLIENT)
     public float getShadowSize()
     {
-        return 0.1F;
+        return 0.0F;
     }
 
     public void setDamage(double par1)
@@ -588,9 +593,9 @@ public class EntityNormalGatling extends Entity implements IProjectile{
     }
     
     /** ダメージソースのタイプ */
-    public DamageSource thisDamageSource()
+    public DamageSource thisDamageSource(Entity entity)
     {
-    	return DCsDamageSource.NormalGutling(this.shootingEntity);
+    	return entity != null ? DCsDamageSource.NormalGutling(entity) : DamageSource.magic;
     }
 
 }

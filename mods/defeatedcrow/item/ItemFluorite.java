@@ -1,5 +1,7 @@
 package mods.defeatedcrow.item;
 
+import java.util.List;
+
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import mods.defeatedcrow.entity.projectile.*;
@@ -15,6 +17,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.src.*;
 import net.minecraft.util.Icon;
+import net.minecraft.util.MathHelper;
 import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.player.ArrowLooseEvent;
@@ -22,101 +25,51 @@ import net.minecraftforge.event.entity.player.ArrowNockEvent;
 
 public class ItemFluorite extends Item{
 	
+private static String[] gemName = {"fluorite", "crocoite"};
+	
+	@SideOnly(Side.CLIENT)
+    private Icon iconType[];
+	
 	public ItemFluorite(int itemId)
 	{
 		super(itemId);
+		this.setMaxDamage(0);
+		this.setHasSubtypes(true);
+	}
+	
+	@SideOnly(Side.CLIENT)
+	public Icon getIconFromDamage(int par1)
+    {
+        int j = MathHelper.clamp_int(par1, 0, 2);
+        return this.iconType[j];
+    }
+
+	@Override
+	public int getMetadata(int par1) {
+		return par1;
+	}
+	
+	@Override
+	public String getUnlocalizedName(ItemStack par1ItemStack) {
+		return super.getUnlocalizedName() + "_" + this.gemName[par1ItemStack.getItemDamage()];
+	}
+	
+	@Override
+	@SideOnly(Side.CLIENT)
+	public void getSubItems(int par1, CreativeTabs par2CreativeTabs, List par3List) {
+		par3List.add(new ItemStack(this, 1, 0));
+		par3List.add(new ItemStack(this, 1, 1));
 	}
 	
 	@Override
 	@SideOnly(Side.CLIENT)
 	public void registerIcons(IconRegister par1IconRegister)
-	{
-		this.itemIcon = par1IconRegister.registerIcon("crowsdefeat:fluorite");
-	}
-	
-
-    public ItemStack onEaten(ItemStack par1ItemStack, World par2World, EntityPlayer par3EntityPlayer)
     {
-    	return par1ItemStack;
+        this.iconType = new Icon[2];
+
+        for (int i = 0; i < 2; ++i)
+        {
+            this.iconType[i] = par1IconRegister.registerIcon("crowsdefeat:" + gemName[i]);
+        }
     }
-
-    /**
-     * How long it takes to use or consume an item
-     */
-    public int getMaxItemUseDuration(ItemStack par1ItemStack)
-    {
-        return 72000;
-    }
-
-    /**
-     * returns the action that specifies what animation to play when the items is being used
-     */
-    public EnumAction getItemUseAction(ItemStack par1ItemStack)
-    {
-        return EnumAction.none;
-    }
-
-    /**
-     * Called whenever this item is equipped and the right mouse button is pressed. Args: itemStack, world, entityPlayer
-     */
-    public ItemStack onItemRightClick(ItemStack par1ItemStack, World par2World, EntityPlayer par3EntityPlayer)
-    {
-
-    	par3EntityPlayer.setItemInUse(par1ItemStack, this.getMaxItemUseDuration(par1ItemStack));
-        this.shootingBullet(par1ItemStack, par2World, par3EntityPlayer);
-
-        return par1ItemStack;
-    }
-
-    /**
-     * Return the enchantability factor of the item, most of the time is based on material.
-     */
-    public int getItemEnchantability()
-    {
-        return 1;
-    }
-
-    @SideOnly(Side.CLIENT)
-
-    /**
-     * used to cycle through icons based on their used duration, i.e. for the bow
-     */
-    public Icon getItemIconForUseDuration(int par1)
-    {
-        return this.itemIcon;
-    }
-    
-    private void shootingBullet (ItemStack par1ItemStack, World par2World, EntityPlayer par3EntityPlayer)
-    {
-    	float f = 1.0F;
-
-        //プレイヤーが撃つときのEntityArrowを生成。
-    	if (par3EntityPlayer.isSneaking())
-    	{
-    		//EntitySmallWave wave = new EntitySmallWave(par2World, par3EntityPlayer, (EntityLivingBase)null, f * 1.5F, 1.0F, 0.0F, 0.0F);
-    		EntityLargeWave wave = new EntityLargeWave(par2World, par3EntityPlayer, (EntityLivingBase)null, f * 1.5F, 1.0F, 0.0F, 0.0F);
-    		EntityNormalGatling bullet1 = new EntityNormalGatling(par2World, par3EntityPlayer, (EntityLivingBase)null, f * 1.5F, 1.0F, 0.0F, 1.0F);
-    		EntityNormalGatling bullet2 = new EntityNormalGatling(par2World, par3EntityPlayer, (EntityLivingBase)null, f * 1.5F, 1.0F, 0.0F, -1.0F);
-    		
-    		if (!par2World.isRemote)
-            {
-                par2World.spawnEntityInWorld(wave);
-                par2World.spawnEntityInWorld(bullet1);
-                par2World.spawnEntityInWorld(bullet2);
-            }
-    	}
-    	else
-    	{
-    		EntityShortLaser laser = new EntityShortLaser(par2World, par3EntityPlayer, (EntityLivingBase)null, f * 2.5F, 1.0F, 0.0F, 0.0F);
-    		
-    		if (!par2World.isRemote)
-            {
-                par2World.spawnEntityInWorld(laser);
-            }
-    	}
-    	
-        par2World.playSoundAtEntity(par3EntityPlayer, "random.pop", 0.4F, 1.8F / (itemRand.nextFloat() * 0.4F + 1.2F) + f * 0.5F);
-
-    }
-
 }

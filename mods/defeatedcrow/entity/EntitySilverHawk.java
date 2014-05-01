@@ -309,11 +309,11 @@ public class EntitySilverHawk extends EntityTameable implements IEntityFlighter{
 
         if (par1)
         {
-            this.getEntityAttribute(SharedMonsterAttributes.maxHealth).setAttribute(20.0D);
+            this.getEntityAttribute(SharedMonsterAttributes.maxHealth).setAttribute(30.0D);
         }
         else
         {
-            this.getEntityAttribute(SharedMonsterAttributes.maxHealth).setAttribute(10.0D);
+            this.getEntityAttribute(SharedMonsterAttributes.maxHealth).setAttribute(20.0D);
         }
     }
 	
@@ -441,7 +441,7 @@ public class EntitySilverHawk extends EntityTameable implements IEntityFlighter{
 	//other setting
 	protected int getDropItemId()
     {
-        return SilverHawkCore.BlackFeather.itemID;
+        return SilverHawkCore.flighterCore.itemID;
     }
 	
 	protected void fall(float par1) {}

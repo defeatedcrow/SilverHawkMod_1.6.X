@@ -45,6 +45,7 @@ import cpw.mods.fml.common.Mod.Instance;
 import cpw.mods.fml.common.SidedProxy;
 import cpw.mods.fml.common.network.NetworkMod;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
+import cpw.mods.fml.common.event.FMLInterModComms;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.registry.EntityRegistry;
@@ -56,7 +57,7 @@ import cpw.mods.fml.relauncher.SideOnly;
 @Mod(
 		modid = "DCsSilverHawk",
 		name = "SilverHawkMod",
-		version = "1.6.4_0.2A"
+		version = "1.6.4_0.2B"
 		)
 @NetworkMod(
 		clientSideRequired = true,
@@ -154,6 +155,8 @@ public class SilverHawkCore {
 	public static boolean isDebugMode = true;
 	
 	public static boolean loaded_IC2 = false;
+	public static boolean loaded_RC = false;
+	public static boolean loaded_TE3 = false;
 	
 	@EventHandler
 	public void preInit(FMLPreInitializationEvent event)
@@ -423,10 +426,10 @@ public class SilverHawkCore {
 	    OreDictionary.registerOre("gemCrocoite", new ItemStack(this.Fluorite, 1, 1));
 	    OreDictionary.registerOre("ingotLead", new ItemStack(this.ingotLead, 1, 0));
 	    OreDictionary.registerOre("dustLead", new ItemStack(this.dustSilver, 1, 1));
-	    OreDictionary.registerOre("dustChrome", new ItemStack(this.dustSilver, 1, 2));
+	    OreDictionary.registerOre("dustChromeVI", new ItemStack(this.dustSilver, 1, 2));
 	    
 	}
-
+	
 	@EventHandler
 	public void init(FMLInitializationEvent event)
 	{
@@ -499,8 +502,26 @@ public class SilverHawkCore {
 	    {
 	    	(new AddChestGen()).addChestItems();
 	    }
-	      
-		
+
+	}
+	
+	@EventHandler
+	public void IMC(FMLInterModComms event)
+	{
+		if (Loader.isModLoaded("ThermalExpansion"))
+	    {
+	    	SHLogger.loadingModInfo("ThermalExpansion");
+	    	try
+	        {
+	          this.loaded_TE3 = true;
+	          (new TE3Plugin()).load();
+	          SHLogger.loadedModInfo("ThermalExpansion");
+	        }
+	        catch (Exception e) {
+	        	SHLogger.failLoadingModInfo("ThermalExpansion");
+	          e.printStackTrace(System.err);
+	        }
+	    }
 	}
 	
 	@EventHandler
@@ -519,6 +540,21 @@ public class SilverHawkCore {
 	        }
 	        catch (Exception e) {
 	        	SHLogger.failLoadingModInfo("IC2");
+	          e.printStackTrace(System.err);
+	        }
+	    }
+		
+		if (Loader.isModLoaded("Railcraft"))
+	    {
+	    	SHLogger.loadingModInfo("Railcraft");
+	    	try
+	        {
+	          this.loaded_RC = true;
+	          (new RCPlugin()).load();
+	          SHLogger.loadedModInfo("Railcraft");
+	        }
+	        catch (Exception e) {
+	        	SHLogger.failLoadingModInfo("Railcraft");
 	          e.printStackTrace(System.err);
 	        }
 	    }

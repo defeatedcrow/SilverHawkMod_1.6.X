@@ -87,7 +87,7 @@ public class ItemFlighterCore extends Item{
             
             SHLogger.debugInfo("target : " + target.entityId);
         	SHLogger.debugInfo("target name : " + target.getEntityName());
-        	SHLogger.debugInfo("before : " + before);
+        	SHLogger.debugInfo("before name : " + before);
             
             if (entity.getEntityName().equalsIgnoreCase(before) && target != null)
             {
@@ -102,6 +102,7 @@ public class ItemFlighterCore extends Item{
                 	((EntityTameable) target).setOwner(player.getDisplayName());
                 }
                 
+                target.heal(10.0F);
                 target.playLivingSound();
                 
                 entity.setDead();

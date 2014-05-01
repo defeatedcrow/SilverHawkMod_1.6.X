@@ -29,7 +29,7 @@ public class ItemCrimsonSword extends ItemSword{
 		super (par1, par2);
 
 		this.setMaxStackSize(1);
-		this.setMaxDamage(192);
+		this.setMaxDamage(127);
 		this.damage = 20;
 	}
 	

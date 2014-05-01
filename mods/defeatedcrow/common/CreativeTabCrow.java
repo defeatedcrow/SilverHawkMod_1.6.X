@@ -25,7 +25,7 @@ public class CreativeTabCrow extends CreativeTabs {
 	@SideOnly(Side.CLIENT)
 	public String getTranslatedTabLabel()
 	{
-		return "CrowsDefeatMod";
+		return "SilverHawkMod";
 	}
 	
 

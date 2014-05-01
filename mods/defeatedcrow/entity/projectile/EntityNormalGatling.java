@@ -31,38 +31,38 @@ import net.minecraft.world.World;
 public class EntityNormalGatling extends Entity implements IProjectile{
 	
 	/** 地中判定に使うもの */
-	private int xTile = -1;
-    private int yTile = -1;
-    private int zTile = -1;
-    private int inTile;
-    private int inData;
-    private boolean inGround;
+	protected int xTile = -1;
+    protected int yTile = -1;
+    protected int zTile = -1;
+    protected int inTile;
+    protected int inData;
+    protected boolean inGround;
 
     /** 撃ったエンティティ */
     public Entity shootingEntity;
     
     /** 地中・空中にいる時間 */
-    private int ticksInGround;
-    private int ticksInAir;
+    protected int ticksInGround;
+    protected int ticksInAir;
     
     /** Seems to be some sort of timer for animating an arrow. */
     public int arrowShake;
     
     /** ダメージの大きさ */
-    protected double damage = 2.0D;
+    protected double damage = 3.0D;
     
     /** ターゲットのエンティティ */
     public Entity targetEntity;
 
     /** ノックバックの大きさ */
-    private int knockbackStrength = 0;
+    protected int knockbackStrength = 0;
 
     public EntityNormalGatling(World par1World)
     {
         super(par1World);
         this.renderDistanceWeight = 10.0D;
         this.setSize(0.2F, 0.2F);
-        this.damage = 1.5D;
+        this.damage = 2.5D;
     }
     
     /** 恐らくメインで使用する定義用メソッド。他は順次消したい。
@@ -185,7 +185,7 @@ public class EntityNormalGatling extends Entity implements IProjectile{
         int i = this.worldObj.getBlockId(this.xTile, this.yTile, this.zTile);
 
         //空気じゃない
-        if (i > 0)
+        if (i > 0 && !this.isPenetrateBlock())
         {
             Block.blocksList[i].setBlockBoundsBasedOnState(this.worldObj, this.xTile, this.yTile, this.zTile);
             AxisAlignedBB axisalignedbb = Block.blocksList[i].getCollisionBoundingBoxFromPool(this.worldObj, this.xTile, this.yTile, this.zTile);
@@ -197,18 +197,19 @@ public class EntityNormalGatling extends Entity implements IProjectile{
             }
         }
 
-        //
+        //空気じゃないブロックに当たった
         if (this.inGround)
         {
             int j = this.worldObj.getBlockId(this.xTile, this.yTile, this.zTile);
             int k = this.worldObj.getBlockMetadata(this.xTile, this.yTile, this.zTile);
 
-            //別メソッドで確認した（恐らくラグでのズレか何か）埋まりブロックのIDとメタを照合している。違ったら埋まり状態を解除、埋まり状態1200tick継続でDead
+            //別メソッドで確認した（恐らくラグでのズレか何か）埋まりブロックのIDとメタを照合している。違ったら埋まり状態を解除、埋まり状態5tick継続でDead
             if (j == this.inTile && k == this.inData)
             {
             	++this.ticksInGround;
+            	int limit = this.isPenetrateBlock() ? 20 : 2;
 
-                if (this.ticksInGround > 2)
+                if (this.ticksInGround > limit)
                 {
                     this.setDead();
                 }
@@ -216,9 +217,9 @@ public class EntityNormalGatling extends Entity implements IProjectile{
             else
             {
                 this.inGround = false;
-                this.motionX *= (double)(this.rand.nextFloat() * 0.2F);
-                this.motionY *= (double)(this.rand.nextFloat() * 0.2F);
-                this.motionZ *= (double)(this.rand.nextFloat() * 0.2F);
+                this.motionX *= (double)(this.rand.nextFloat() * 0.1F);
+                this.motionY *= (double)(this.rand.nextFloat() * 0.1F);
+                this.motionZ *= (double)(this.rand.nextFloat() * 0.1F);
                 this.ticksInGround = 0;
                 this.ticksInAir = 0;
             }
@@ -226,11 +227,18 @@ public class EntityNormalGatling extends Entity implements IProjectile{
         else//別に埋まってない時。速度の更新。
         {
             ++this.ticksInAir;
+            //ブロックとの衝突判定
             Vec3 vec3 = this.worldObj.getWorldVec3Pool().getVecFromPool(this.posX, this.posY, this.posZ);
             Vec3 vec31 = this.worldObj.getWorldVec3Pool().getVecFromPool(this.posX + this.motionX, this.posY + this.motionY, this.posZ + this.motionZ);
             MovingObjectPosition movingobjectposition = this.worldObj.rayTraceBlocks_do_do(vec3, vec31, false, true);
             vec3 = this.worldObj.getWorldVec3Pool().getVecFromPool(this.posX, this.posY, this.posZ);
             vec31 = this.worldObj.getWorldVec3Pool().getVecFromPool(this.posX + this.motionX, this.posY + this.motionY, this.posZ + this.motionZ);
+            
+            //ブロック貫通がONの場合、ブロック衝突判定をスキップ
+            if (this.isPenetrateBlock())
+            {
+            	movingobjectposition = null;
+            }
             
             //ブロックに当たった
             if (movingobjectposition != null)
@@ -320,10 +328,11 @@ public class EntityNormalGatling extends Entity implements IProjectile{
                 {
                     f2 = MathHelper.sqrt_double(this.motionX * this.motionX + this.motionY * this.motionY + this.motionZ * this.motionZ);
                     int i1 = MathHelper.ceiling_double_int((double)f2 * this.damage);
-                    i1 += this.rand.nextInt(i1 / 4);
+                    i1 += this.rand.nextInt(3);//強制クリティカル処理
 
                     DamageSource damagesource = null;
 
+                    //独自のダメージソース
                     if (this.shootingEntity != null)
                     {
                         damagesource = this.thisDamageSource(this.shootingEntity);
@@ -333,6 +342,7 @@ public class EntityNormalGatling extends Entity implements IProjectile{
                         damagesource = DamageSource.magic;
                     }
 
+                    //バニラ矢と同様、燃えているフラグがONなら着火することも出来る
                     if (this.isBurning() && !(movingobjectposition.entityHit instanceof EntityEnderman))
                     {
                         movingobjectposition.entityHit.setFire(5);
@@ -371,13 +381,14 @@ public class EntityNormalGatling extends Entity implements IProjectile{
 
                         this.playSound("random.bowhit", 1.0F, 1.2F / (this.rand.nextFloat() * 0.2F + 0.9F));
 
-                        if (!(movingobjectposition.entityHit instanceof EntityEnderman))
+                        //当たったあと、弾を消去する。エンティティ貫通がONの弾種はそのまま残す。
+                        if (!(movingobjectposition.entityHit instanceof EntityEnderman) && !this.isPenetrateEntity())
                         {
                             this.setDead();
                         }
                     }
                 }
-                else  //エンティティには当たってない。ブロックに当たった。
+                else if (!this.isPenetrateBlock())  //エンティティには当たってない。ブロックに当たった。
                 {
                     this.xTile = movingobjectposition.blockX;
                     this.yTile = movingobjectposition.blockY;
@@ -392,9 +403,9 @@ public class EntityNormalGatling extends Entity implements IProjectile{
                     this.posY -= this.motionY / (double)f2 * 0.05000000074505806D;
                     this.posZ -= this.motionZ / (double)f2 * 0.05000000074505806D;
                     //this.playSound("random.bowhit", 1.0F, 1.2F / (this.rand.nextFloat() * 0.2F + 0.9F));
-                    this.inGround = true;
                     this.setIsCritical(false);
-
+                    this.inGround = true;
+                    
                     if (this.inTile != 0)
                     {
                         Block.blocksList[this.inTile].onEntityCollidedWithBlock(this.worldObj, this.xTile, this.yTile, this.zTile, this);
@@ -403,6 +414,10 @@ public class EntityNormalGatling extends Entity implements IProjectile{
             }
 
             //ターゲット追尾の場合の計算式
+            if (this.targetEntity != null)
+            {
+            	if (this.thisType() == OrbitType.SNIPE);
+            }
             
             
             //改めてポジションに速度を加算。向きも更新。
@@ -596,6 +611,18 @@ public class EntityNormalGatling extends Entity implements IProjectile{
     public DamageSource thisDamageSource(Entity entity)
     {
     	return entity != null ? DCsDamageSource.NormalGutling(entity) : DamageSource.magic;
+    }
+    
+    /** ブロック貫通 */
+    public boolean isPenetrateBlock()
+    {
+    	return false;
+    }
+    
+    /** エンティティ貫通 */
+    public boolean isPenetrateEntity()
+    {
+    	return false;
     }
 
 }

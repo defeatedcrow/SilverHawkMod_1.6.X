@@ -153,7 +153,7 @@ public class PlateSWEvent implements IForgeEvent {
 								projType = 0;
 								break;
 							case SILVER_HAWK:
-								projType = (byte) ((playerSP.experienceLevel > 40 || criative) ? 4 : (playerSP.experienceLevel / 10));
+								projType = (byte) ((playerSP.experienceLevel > 39 || criative) ? 3 : (playerSP.experienceLevel / 10));
 								break;
 							case UNKNOUN:
 								projType = 0;

@@ -1,9 +1,25 @@
 package mods.defeatedcrow.entity.projectile;
 
+import java.util.List;
+
+import mods.defeatedcrow.common.SilverHawkCore;
 import mods.defeatedcrow.util.DCsDamageSource;
+import net.minecraft.block.Block;
+import net.minecraft.enchantment.EnchantmentThorns;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.monster.EntityEnderman;
+import net.minecraft.entity.passive.EntityHorse;
+import net.minecraft.entity.passive.EntityTameable;
+import net.minecraft.entity.passive.EntityVillager;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.network.packet.Packet70GameEvent;
+import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.DamageSource;
+import net.minecraft.util.MathHelper;
+import net.minecraft.util.MovingObjectPosition;
+import net.minecraft.util.Vec3;
 import net.minecraft.world.World;
 
 public class EntityShortLaser extends EntityNormalGatling{
@@ -13,7 +29,7 @@ public class EntityShortLaser extends EntityNormalGatling{
         super(par1World);
         this.renderDistanceWeight = 10.0D;
         this.setSize(0.2F, 1.0F);
-        this.damage = 3.0D;
+        this.damage = 3.5D;
     }
 	
 	public EntityShortLaser(World par1World, EntityLivingBase par2EntityLivingBase, EntityLivingBase par3EntityLivingBase, float speed, float speed2, float ajustX, float ajustZ, float ajustY)
@@ -42,6 +58,20 @@ public class EntityShortLaser extends EntityNormalGatling{
     public DamageSource thisDamageSource(Entity entity)
     {
     	return DCsDamageSource.Laser(entity);
+    }
+	
+	/** ブロック貫通 */
+	@Override
+    public boolean isPenetrateBlock()
+    {
+    	return false;
+    }
+    
+    /** エンティティ貫通 */
+	@Override
+    public boolean isPenetrateEntity()
+    {
+    	return true;
     }
 
 }

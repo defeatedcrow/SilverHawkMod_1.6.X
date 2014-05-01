@@ -55,22 +55,22 @@ public class SHPacketHandler implements IPacketHandler
 				{
 					switch (type)
 					{
-					case 1://白玉
+					case 0://白玉
 						EntityNormalGatling ball = new EntityNormalGatling(world, thisPlayer, (EntityLivingBase)null, 2.5F, 1.0F, 0.0F, 0.0F, -1.0F);
 						world.spawnEntityInWorld(ball);
 						world.playSoundEffect(thisPlayer.posX + 0.5D, thisPlayer.posY - 0.5D, thisPlayer.posZ + 0.5D, "random.pop", 1.0F, 1.8F);
 						break;
-					case 2://レーザー
+					case 1://レーザー
 						EntityShortLaser laser = new EntityShortLaser(world, thisPlayer, (EntityLivingBase)null, 2.5F, 1.0F, 0.0F, 0.0F, -1.0F);
 						world.spawnEntityInWorld(laser);
 						world.playSoundEffect(thisPlayer.posX + 0.5D, thisPlayer.posY - 0.5D, thisPlayer.posZ + 0.5D, "random.pop", 1.0F, 1.8F);
 						break;
-					case 3://緑ウェーブ
+					case 2://緑ウェーブ
 						EntitySmallWave wave = new EntitySmallWave(world, thisPlayer, (EntityLivingBase)null, 2.5F, 1.0F, 0.0F, 0.0F, -1.0F);
 						world.spawnEntityInWorld(wave);
 						world.playSoundEffect(thisPlayer.posX + 0.5D, thisPlayer.posY - 0.5D, thisPlayer.posZ + 0.5D, "random.pop", 1.0F, 1.8F);
 						break;
-					case 4://赤ウェーブ＋白玉
+					case 3://赤ウェーブ＋白玉
 						EntityLargeWave largeWave = new EntityLargeWave(world, thisPlayer, (EntityLivingBase)null, 2.5F, 1.0F, 0.0F, 0.0F, -1.0F);
 						EntityNormalGatling ball2 = new EntityNormalGatling(world, thisPlayer, (EntityLivingBase)null, 2.5F, 1.0F, 1.0F, 0.0F, -1.0F);
 						EntityNormalGatling ball3 = new EntityNormalGatling(world, thisPlayer, (EntityLivingBase)null, 2.5F, 1.0F, -1.0F, 0.0F, -1.0F);
@@ -78,6 +78,8 @@ public class SHPacketHandler implements IPacketHandler
 						world.spawnEntityInWorld(ball2);
 						world.spawnEntityInWorld(ball3);
 						world.playSoundEffect(thisPlayer.posX + 0.5D, thisPlayer.posY - 0.5D, thisPlayer.posZ + 0.5D, "random.pop", 1.0F, 1.8F);
+						break;
+					case 4:
 						break;
 					case 5:
 						break;

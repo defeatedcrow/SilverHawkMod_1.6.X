@@ -13,7 +13,7 @@ public class EntitySmallWave extends EntityNormalGatling{
         super(par1World);
         this.renderDistanceWeight = 10.0D;
         this.setSize(1.0F, 0.2F);
-        this.damage = 1.5D;
+        this.damage = 2.0D;
     }
 	
 	public EntitySmallWave(World par1World, EntityLivingBase par2EntityLivingBase, EntityLivingBase par3EntityLivingBase, float speed, float speed2, float ajustX, float ajustZ, float ajustY)
@@ -39,6 +39,20 @@ public class EntitySmallWave extends EntityNormalGatling{
     public DamageSource thisDamageSource(Entity entity)
     {
     	return DCsDamageSource.Energy(entity);
+    }
+    
+    /** ブロック貫通 */
+	@Override
+    public boolean isPenetrateBlock()
+    {
+    	return true;
+    }
+    
+    /** エンティティ貫通 */
+	@Override
+    public boolean isPenetrateEntity()
+    {
+    	return true;
     }
 
 }

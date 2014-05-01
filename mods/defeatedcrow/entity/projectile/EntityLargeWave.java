@@ -13,7 +13,7 @@ public class EntityLargeWave extends EntityNormalGatling{
         super(par1World);
         this.renderDistanceWeight = 10.0D;
         this.setSize(1.2F, 0.2F);
-        this.damage = 2.0D;
+        this.damage = 3.0D;
     }
 	
 	public EntityLargeWave(World par1World, EntityLivingBase par2EntityLivingBase, EntityLivingBase par3EntityLivingBase, float speed, float speed2, float ajustX, float ajustZ, float ajustY)
@@ -39,6 +39,20 @@ public class EntityLargeWave extends EntityNormalGatling{
     public DamageSource thisDamageSource(Entity entity)
     {
     	return DCsDamageSource.Energy(entity);
+    }
+    
+    /** ブロック貫通 */
+	@Override
+    public boolean isPenetrateBlock()
+    {
+    	return true;
+    }
+    
+    /** エンティティ貫通 */
+	@Override
+    public boolean isPenetrateEntity()
+    {
+    	return true;
     }
 
 }

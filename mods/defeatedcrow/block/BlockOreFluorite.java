@@ -54,10 +54,11 @@ public class BlockOreFluorite extends Block{
     public ArrayList<ItemStack> getBlockDropped(World world, int x, int y, int z, int metadata, int fortune)
     {
         ArrayList<ItemStack> ret = super.getBlockDropped(world, x, y, z, metadata, fortune);
+        int f = fortune > 0 ? world.rand.nextInt(fortune) : 0;
 
         if (metadata == 0)
         {
-        	ret.add(new ItemStack(SilverHawkCore.Fluorite, 1 + world.rand.nextInt(fortune), 0));
+        	ret.add(new ItemStack(SilverHawkCore.Fluorite, 1 + f, 0));
         }
         else if (metadata == 1)
         {
@@ -65,7 +66,7 @@ public class BlockOreFluorite extends Block{
         }
         else if (metadata == 2)
         {
-        	ret.add(new ItemStack(SilverHawkCore.Fluorite, 1 + world.rand.nextInt(fortune), 1));
+        	ret.add(new ItemStack(SilverHawkCore.Fluorite, 1 + f, 1));
         }
         return ret;
     }

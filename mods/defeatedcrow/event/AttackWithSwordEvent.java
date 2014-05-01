@@ -17,13 +17,17 @@ public class AttackWithSwordEvent implements IForgeEvent{
 	{
 		EntityPlayer player = event.entityPlayer;
 		ItemStack current  = player.inventory.getCurrentItem();
-		EntityLivingBase target = (EntityLivingBase) event.target;
 		
-		if (!player.worldObj.isRemote)
+		if (event.target instanceof EntityLivingBase)
 		{
-			if(target.isImmuneToFire() && current != null && current.itemID == SilverHawkCore.blueSword.itemID)
+			EntityLivingBase target = (EntityLivingBase) event.target;
+			
+			if (!player.worldObj.isRemote)
 			{
-				target.addPotionEffect(new PotionEffect(Potion.harm.id, 1, 1));
+				if(target.isImmuneToFire() && current != null && current.itemID == SilverHawkCore.blueSword.itemID)
+				{
+					target.addPotionEffect(new PotionEffect(Potion.harm.id, 1, 1));
+				}
 			}
 		}
 	}

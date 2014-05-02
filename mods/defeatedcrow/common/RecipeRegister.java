@@ -26,6 +26,12 @@ public class RecipeRegister {
 	    			  Character.valueOf('Y'), new ItemStack(SilverHawkCore.Fluorite, 1, 0)});
 		 
 		 GameRegistry.addRecipe(
+	    		  new ItemStack(SilverHawkCore.DarkGlass, 8),
+	    		  new Object[]{"XXX","XYX","XXX",
+	    			  Character.valueOf('X'), Block.glass,
+	    			  Character.valueOf('Y'), new ItemStack(SilverHawkCore.Fluorite, 1, 1)});
+		 
+		 GameRegistry.addRecipe(
 	    		  new ItemStack(SilverHawkCore.CDLantern, 1),
 	    		  new Object[]{"　Y　","XZX"," Y ",
 	    			  Character.valueOf('X'), Block.thinGlass,

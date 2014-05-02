@@ -57,7 +57,7 @@ import cpw.mods.fml.relauncher.SideOnly;
 @Mod(
 		modid = "DCsSilverHawk",
 		name = "SilverHawkMod",
-		version = "1.6.4_0.2B"
+		version = "1.6.4_0.2C"
 		)
 @NetworkMod(
 		clientSideRequired = true,
@@ -82,6 +82,11 @@ public class SilverHawkCore {
 	public static Block CDLantern;
 	public static Block GlowButton;
 	public static Block GlowMoss;
+	public static Block DarkGlass;
+	public static Block NeoBedrock;
+	public static Block ClearStone;
+	public static Block ClearGround;
+	public static Block ClearOre;
 	public static Item  BlackEgg;
 	public static Item  BlackFeather;
 	public static Item  armBFMet, armBFPlate, armBFLegs, armBFBoots;
@@ -98,9 +103,14 @@ public class SilverHawkCore {
 	public int blockIdOre = 711;
 	public int blockIdFLight = 712;
 	public int blockIdFGlass = 713;
+	public int blockIdDGlass = 714;
 	public int blockIdCDL = 715;
 	public int blockIdGButton = 716;
 	public int blockIdGMoss = 717;
+	public int blockIdNeoBedrock = 210;
+	public int blockIdCLStone = 211;
+	public int bloclIdCLGround = 212;
+	public int blockIdCLOre = 213;
 	public int itemIdFluorite = 7011;
 	public int itemIdBegg = 7013;
 	public int itemIdBfeather = 7012;
@@ -169,6 +179,7 @@ public class SilverHawkCore {
 			Property blockOre = cfg.getBlock("OreBlock", blockIdOre);
 			Property blockFLight = cfg.getBlock("FluoriteLight", blockIdFLight);
 			Property blockFGlass = cfg.getBlock("FluoroGlass", blockIdFGlass);
+			Property blockDGlass = cfg.getBlock("DarkGlass", blockIdDGlass);
 			Property blockCDL = cfg.getBlock("FluoriteLantern", blockIdCDL);
 			Property blockGButton = cfg.getBlock("GlowingButton", blockIdGButton);
 			Property blockGMoss = cfg.getBlock("GlowingMoss", blockIdGMoss);
@@ -212,6 +223,7 @@ public class SilverHawkCore {
 			blockIdOre = blockOre.getInt();
 			blockIdFLight = blockFLight.getInt();
 			blockIdFGlass = blockFGlass.getInt();
+			blockIdDGlass = blockDGlass.getInt();
 			blockIdCDL = blockCDL.getInt();
 			blockIdGButton = blockGButton.getInt();
 			blockIdGMoss = blockGMoss.getInt();
@@ -279,6 +291,9 @@ public class SilverHawkCore {
 				setCreativeTab(SilverHawkCore.crowsdefeat);
 		
 		FluoroGlass = (new BlockFluoroGlass(blockIdFGlass, Material.glass, false)).
+				setCreativeTab(SilverHawkCore.crowsdefeat);
+		
+		DarkGlass = (new BlockDarkGlass(blockIdDGlass, Material.glass, false)).
 				setCreativeTab(SilverHawkCore.crowsdefeat);
 		
 		CDLantern = (new BlockCDLantern(blockIdCDL)).
@@ -384,6 +399,7 @@ public class SilverHawkCore {
 		GameRegistry.registerBlock(Ores, ItemOreFluorite.class, "defeatedcrow.ores");
 		GameRegistry.registerBlock(FluoriteLight, "defeatedcrow.fluoriteLight");
 		GameRegistry.registerBlock(FluoroGlass, "defeatedcrow.fluoroGlass");
+		GameRegistry.registerBlock(DarkGlass, "defeatedcrow.darkGlass");
 		GameRegistry.registerBlock(CDLantern, "defeatedcrow.CDLantern");
 		GameRegistry.registerBlock(GlowButton, "defeatedcrow.glowingButton");
 		GameRegistry.registerBlock(GlowMoss, "defeatedcrow.glowingMoss");

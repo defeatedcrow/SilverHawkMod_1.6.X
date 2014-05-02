@@ -172,7 +172,6 @@ public class PlateSWEvent implements IForgeEvent {
 			}
 			else //対象のモブに乗っていない
 			{
-				playerSP.capabilities.allowFlying = true;
 				
 				if((playerSP.isInWater()) && (inventorySP.armorInventory[2] != null) && (inventorySP.armorInventory[2].itemID == SilverHawkCore.armSWPlate.itemID))
 				{
@@ -233,8 +232,6 @@ public class PlateSWEvent implements IForgeEvent {
         }
 
 		player.fallDistance = 0.0f;
-//		this.flyKey = SilverHawkCore.proxy.getFlyKeyDown();
-//		this.sneakKey = SilverHawkCore.proxy.getSneakKeyDown();
 
 		if (allowedFly && (this.flyKey || !player.onGround))
         {

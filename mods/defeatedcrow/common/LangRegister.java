@@ -20,8 +20,8 @@ public class LangRegister {
 		LanguageRegistry.addName(SilverHawkCore.FluoroGlass, "Luminecence Glass");
 		LanguageRegistry.instance().addNameForObject(SilverHawkCore.FluoroGlass, "ja_JP", "発光ガラス");
 		
-		LanguageRegistry.addName(SilverHawkCore.FluoroGlass, "Dark Glass");
-		LanguageRegistry.instance().addNameForObject(SilverHawkCore.FluoroGlass, "ja_JP", "遮光ガラス");
+		LanguageRegistry.addName(SilverHawkCore.DarkGlass, "Dark Glass");
+		LanguageRegistry.instance().addNameForObject(SilverHawkCore.DarkGlass, "ja_JP", "遮光ガラス");
 		
 		LanguageRegistry.addName(SilverHawkCore.CDLantern, "Fluorite Lantern");
 		LanguageRegistry.instance().addNameForObject(SilverHawkCore.CDLantern, "ja_JP", "蛍石カンデラ");

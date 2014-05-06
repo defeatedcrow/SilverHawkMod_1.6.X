@@ -1,11 +1,12 @@
 package mods.defeatedcrow.common;
 
+import cpw.mods.fml.common.network.IGuiHandler;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.world.World;
 
 
-public class CommonProxy {
+public class CommonProxy implements IGuiHandler{
 	
 	public int addArmor(String armor)
 	{
@@ -33,6 +34,18 @@ public class CommonProxy {
 	
 	public boolean getSneakKeyDown() {
 		return false;
+	}
+	
+	@Override
+	public Object getServerGuiElement(int ID, EntityPlayer player, World world,
+			int x, int y, int z) {
+		return null;
+	}
+ 
+	@Override
+	public Object getClientGuiElement(int ID, EntityPlayer player, World world,
+			int x, int y, int z) {
+		return null;
 	}
 
 }

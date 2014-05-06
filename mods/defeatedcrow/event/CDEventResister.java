@@ -14,6 +14,7 @@ public class CDEventResister {
 	{
 		events.add(new PlateSWEvent());
 		events.add(new AttackWithSwordEvent());
+		events.add(new FallOnBedrockEvent());
 	}
 	
 	public void registerEvent()

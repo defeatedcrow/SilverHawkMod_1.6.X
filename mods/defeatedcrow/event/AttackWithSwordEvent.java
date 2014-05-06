@@ -12,6 +12,7 @@ import net.minecraftforge.event.entity.player.AttackEntityEvent;
 
 public class AttackWithSwordEvent implements IForgeEvent{
 	
+	/**直接攻撃したモブの耐性によって追加効果を発生させる。*/
 	@ForgeSubscribe
 	public void AttackEntityEvent(AttackEntityEvent event)
 	{

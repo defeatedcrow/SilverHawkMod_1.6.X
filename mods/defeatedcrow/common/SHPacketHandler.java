@@ -45,11 +45,6 @@ public class SHPacketHandler implements IPacketHandler
                 boolean isServer = false;
                 EntityPlayerMP thisPlayer = (EntityPlayerMP) player;
                 World world = thisPlayer.worldObj;
-//                World world = SilverHawkCore.proxy.getClientWorld();
-//				if (world == null) {
-//					world = thisPlayer.worldObj;
-//					isServer = true;
-//				}
 				
 				if (world != null)
 				{

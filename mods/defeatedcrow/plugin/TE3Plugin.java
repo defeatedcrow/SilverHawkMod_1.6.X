@@ -19,7 +19,7 @@ public class TE3Plugin {
 		new ItemStack(SilverHawkCore.Fluorite, 2, 0).writeToNBT(toSend.getCompoundTag("primaryOutput"));
 		new ItemStack(SilverHawkCore.Fluorite, 1, 0).writeToNBT(toSend.getCompoundTag("secondaryOutput"));
 		toSend.setInteger("secondaryChance", 50);
-		FMLInterModComms.sendMessage("ThermalExpansion", "PulverizerRecipe OR SawmillRecipe", toSend);
+		FMLInterModComms.sendMessage("ThermalExpansion", "PulverizerRecipe", toSend);
 		
 		NBTTagCompound toSend2 = new NBTTagCompound();
 		toSend2.setInteger("energy", 3200);
@@ -31,7 +31,7 @@ public class TE3Plugin {
 		new ItemStack(SilverHawkCore.Fluorite, 2, 1).writeToNBT(toSend2.getCompoundTag("primaryOutput"));
 		new ItemStack(SilverHawkCore.Fluorite, 1, 1).writeToNBT(toSend2.getCompoundTag("secondaryOutput"));
 		toSend2.setInteger("secondaryChance", 50);
-		FMLInterModComms.sendMessage("ThermalExpansion", "PulverizerRecipe OR SawmillRecipe", toSend2);
+		FMLInterModComms.sendMessage("ThermalExpansion", "PulverizerRecipe", toSend2);
 		
 		NBTTagCompound toSend3 = new NBTTagCompound();
 		toSend3.setInteger("energy", 3200);
@@ -43,7 +43,7 @@ public class TE3Plugin {
 		new ItemStack(SilverHawkCore.dustSilver, 2, 1).writeToNBT(toSend3.getCompoundTag("primaryOutput"));
 		new ItemStack(SilverHawkCore.dustSilver, 1, 2).writeToNBT(toSend3.getCompoundTag("secondaryOutput"));
 		toSend3.setInteger("secondaryChance", 25);
-		FMLInterModComms.sendMessage("ThermalExpansion", "PulverizerRecipe OR SawmillRecipe", toSend3);
+		FMLInterModComms.sendMessage("ThermalExpansion", "PulverizerRecipe", toSend3);
 	}
 
 }

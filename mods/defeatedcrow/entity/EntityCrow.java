@@ -382,7 +382,4 @@ public class EntityCrow extends EntityTameable{
 		
 		return this.spawnBabyAnimal(entityageable);
 	}
-	
-	
-
 }

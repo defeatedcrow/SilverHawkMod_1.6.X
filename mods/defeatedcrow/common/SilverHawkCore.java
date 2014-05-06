@@ -14,6 +14,8 @@ import mods.defeatedcrow.event.NewSoundEvent;
 import mods.defeatedcrow.item.*;
 import mods.defeatedcrow.plugin.*;
 import mods.defeatedcrow.util.*;
+import mods.defeatedcrow.world.WorldProviderReverse;
+import mods.defeatedcrow.world.biome.BiomeGenBaseReverse;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockBreakable;
 import net.minecraft.block.material.Material;
@@ -33,6 +35,7 @@ import net.minecraft.world.biome.BiomeGenBase;
 import net.minecraftforge.common.BiomeDictionary;
 import net.minecraftforge.common.ChestGenHooks;
 import net.minecraftforge.common.Configuration;
+import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.Property;
 import net.minecraftforge.common.EnumHelper;
@@ -83,10 +86,16 @@ public class SilverHawkCore {
 	public static Block GlowButton;
 	public static Block GlowMoss;
 	public static Block DarkGlass;
+	
+	public static Block SHPortal;
+	public static Block GameMachine;
+	
 	public static Block NeoBedrock;
 	public static Block ClearStone;
 	public static Block ClearGround;
+	public static Block ClearGrass;
 	public static Block ClearOre;
+	
 	public static Item  BlackEgg;
 	public static Item  BlackFeather;
 	public static Item  armBFMet, armBFPlate, armBFLegs, armBFBoots;
@@ -107,10 +116,20 @@ public class SilverHawkCore {
 	public int blockIdCDL = 715;
 	public int blockIdGButton = 716;
 	public int blockIdGMoss = 717;
+	public int blockIdGameMachine = 720;
+	public int blockIdGamePortal = 721;
+	
 	public int blockIdNeoBedrock = 210;
 	public int blockIdCLStone = 211;
-	public int bloclIdCLGround = 212;
-	public int blockIdCLOre = 213;
+	public int blockIdCLGround = 212;
+	public int blockIdCLOre = 214;
+	public int blockIdCLGrass = 213;
+	public int blockIdRPlants = 215;
+	public int blockIdRSapling = 216;
+	
+	public int fluidIdRWater = 217;
+	public int fluidIdRLava = 219;
+	
 	public int itemIdFluorite = 7011;
 	public int itemIdBegg = 7013;
 	public int itemIdBfeather = 7012;
@@ -133,6 +152,12 @@ public class SilverHawkCore {
 	public int armIdSWL = 7030;
 	public int armIdSWB = 7031;
 	public int itemIdFlighterCore = 7032;
+	public int itemIdChangeCore = 7033;
+	public int itemIdBossDrops = 7035;
+	public int itemIdRWaterBucket = 7040;
+	public int itemIdRLavaBucket = 7041;
+	
+	//ID of Living Entity
 	public static int entityIdCrow = 250;
 	public static int entityIdSHawk = 251;
 	public static int entityIdSChicken = 252;
@@ -141,12 +166,26 @@ public class SilverHawkCore {
 	public static int entityIdFireleo = 255;
 	public static int entityIdToxicviper = 256;
 	
-	//id of projectiles
+	//ID of projectiles
 	public static int projIdShifter = 270;
 	public int projIdNormal = 0;
 	public int projIdSLaser = 1;
 	public int projIdSWave = 2;
 	public int projIdLWave = 3;
+	
+	//ID of Dimension and Biomes
+	public static int DCsDimID = 11;
+	public static int biomeIdShifter = 90;
+	public static int biomeIdRPlain = 0;
+	public static int biomeIdRMountain = 1;
+	public static int biomeIdRForest = 2;
+	public static int biomeIdROcean = 3;
+	public static int biomeIdRmine = 4;
+	public static int biomeIdDplain = 5;
+	public static int biomeIdDmountain = 6;
+	public static int biomeIdDLava = 7;
+	public static int biomeIdRBeach = 8;
+	public static int biomeIdRMountainEdge = 9;
 	
 	public static boolean useEXRecipe = false;
 	public static boolean addDungeonRootCD = true;
@@ -154,6 +193,7 @@ public class SilverHawkCore {
 	public static boolean disableDamageForVillager = true;
 
 	public static int modelLantern;
+	public static int modelInvisible;
 	
 	public static int cfgFlyKeySet = Keyboard.KEY_SPACE;
 	public static int cfgSneakKeySet = Keyboard.KEY_LSHIFT;
@@ -167,6 +207,8 @@ public class SilverHawkCore {
 	public static boolean loaded_IC2 = false;
 	public static boolean loaded_RC = false;
 	public static boolean loaded_TE3 = false;
+	
+	private final String BR = System.getProperty("line.separator");
 	
 	@EventHandler
 	public void preInit(FMLPreInitializationEvent event)
@@ -183,6 +225,24 @@ public class SilverHawkCore {
 			Property blockCDL = cfg.getBlock("FluoriteLantern", blockIdCDL);
 			Property blockGButton = cfg.getBlock("GlowingButton", blockIdGButton);
 			Property blockGMoss = cfg.getBlock("GlowingMoss", blockIdGMoss);
+			Property blockPortal = cfg.getBlock("PortalBlock", blockIdGamePortal);
+			
+			Property blockCLStone = cfg.getTerrainBlock("block_terrain", "TransparentStones", blockIdCLStone, 
+					"This block are used in terrain generation. please set the ID 255 or less.");
+			Property blockCLGround = cfg.getTerrainBlock("block_terrain", "TransparentGrounds", blockIdCLStone, 
+					"This block are used in terrain generation. please set the ID 255 or less.");
+			Property blockCLGrass = cfg.getTerrainBlock("block_terrain", "TransparentGrass", blockIdCLGround, 
+					"This block are used in terrain generation. please set the ID 255 or less.");
+			Property blockCLOre = cfg.getTerrainBlock("block_terrain", "TransparentOre", blockIdCLGrass, 
+					"This block are used in terrain generation. please set the ID 255 or less.");
+			Property blockNeoBR = cfg.getTerrainBlock("block_terrain", "TransparentBedrock", blockIdNeoBedrock, 
+					"This block are used in terrain generation. please set the ID 255 or less.");
+			Property blockRWater = cfg.getTerrainBlock("block_fluid", "ReverseWater", fluidIdRWater, 
+					"This block are used in terrain generation, and this block are fluid."
+					+ BR +  "The ID should be 255 or less, and the next ID should be vacant.");
+			Property blockRLava = cfg.getTerrainBlock("block_fluid", "ReverseLava", fluidIdRLava, 
+					"This block are used in terrain generation, and this block are fluid."
+					+ BR +  "The ID should be 255 or less, and the next ID should be vacant.");
 			
 			Property itemFluorite  = cfg.getItem("Fluorite", itemIdFluorite);
 			Property itemBegg = cfg.getItem("CraftingItems", itemIdBegg);
@@ -194,6 +254,11 @@ public class SilverHawkCore {
 			Property itemingotS = cfg.getItem("SilverIngot", itemIdingotS);
 			Property itemingotL = cfg.getItem("LeadIngot", itemIdingotL);
 			Property itemFlighterCore = cfg.getItem("FlighterCore", itemIdFlighterCore);
+			Property itemChangeCore = cfg.getItem("ChangingCore", itemIdChangeCore);
+			Property itemBossDrops = cfg.getItem("BossDrops", itemIdBossDrops);
+			Property itemRWBucket = cfg.getItem("BucketofR_Water", itemIdRWaterBucket);
+			Property itemRLBucket = cfg.getItem("BucketOfR_Lava", itemIdRLavaBucket);
+			
 			Property armBFmet = cfg.getItem("CrowHelmet", armIdBFM);
 			Property armBFPlate = cfg.getItem("CrowPlate", armIdBFP);
 			Property armBFLegs = cfg.getItem("CrowLeggins", armIdBFL);
@@ -206,19 +271,27 @@ public class SilverHawkCore {
 			Property armSWPlate = cfg.getItem("SwanPlate", armIdSWP);
 			Property armSWLegs = cfg.getItem("SwanLeggins", armIdSWL);
 			Property armSWBoots = cfg.getItem("SwanBoots", armIdSWB);
+			
 			Property setFlyKey = cfg.get("keyCode", "FlyKey", cfgFlyKeySet, "This key is used for starting flight, and for the rise.");
 			Property setSneakKey = cfg.get("keyCode", "SneakKey", cfgSneakKeySet, "This key is used for swimming in water.");
+			
 			Property entityCBCrow = cfg.get("entity", "CrowID", entityIdCrow);
 			Property entitySHawk = cfg.get("entity", "SilverHawkID", entityIdSHawk);
 			Property entitySChicken = cfg.get("entity", "SilverChickenID", entityIdSChicken);
+			
 			Property recipeBoolean = cfg.get("Setting", "Use Extra Recipe", useEXRecipe, "Add recipe for crafting blackfeather.");
 			Property chestBoolean = cfg.get("Setting", "Add Custom Dungeon Root", addDungeonRootCD, "Not add custom dungeon root.");
 			Property disDamageTameable = cfg.get("Setting", "Disable Damage for Tamable Entity", disableDamageForTameable,
 					"Disable the bullet damage given to the animal.");
 			Property disDamageVillager = cfg.get("Setting", "Disable Damage for Villager", disableDamageForVillager,
 					"Disable the bullet damage given to the villager.");
-			Property projId = cfg.get("entity", "Projectiles ID Shift", projIdShifter,
+			
+			Property projId = cfg.get("entity_projectile", "Projectiles ID Shift", projIdShifter,
 					"Shift ID number of the projectiles of this MOD.");
+			Property biomeId = cfg.get("world_biome", "Biomes ID Shift", biomeIdShifter,
+					"Shift ID number of the biomes of this MOD.");
+			Property DimId = cfg.get("world", "Dimension ID", DCsDimID,
+					"ID number of the dimension of this MOD.");
 			
 			blockIdOre = blockOre.getInt();
 			blockIdFLight = blockFLight.getInt();
@@ -227,6 +300,16 @@ public class SilverHawkCore {
 			blockIdCDL = blockCDL.getInt();
 			blockIdGButton = blockGButton.getInt();
 			blockIdGMoss = blockGMoss.getInt();
+			blockIdGamePortal = blockPortal.getInt();
+			
+			blockIdCLStone = blockCLStone.getInt();
+			blockIdCLGround = blockCLGround.getInt();
+			blockIdCLGrass = blockCLGrass.getInt();
+			blockIdCLOre = blockCLOre.getInt();
+			blockIdNeoBedrock = blockNeoBR.getInt();
+			
+			fluidIdRWater = blockRWater.getInt();
+			fluidIdRLava = blockRLava.getInt();
 			
 			itemIdFluorite  = itemFluorite.getInt();
 			itemIdBegg  = itemBegg.getInt();
@@ -238,6 +321,10 @@ public class SilverHawkCore {
 			itemIdingotS  = itemingotS.getInt();
 			itemIdingotL = itemingotL.getInt();
 			itemIdFlighterCore = itemFlighterCore.getInt();
+			itemIdChangeCore = itemChangeCore.getInt();
+			itemIdBossDrops = itemBossDrops.getInt();
+			itemIdRWaterBucket = itemRWBucket.getInt();
+			itemIdRLavaBucket = itemRLBucket.getInt();
 			
 			armIdBFM  = armBFmet.getInt();
 			armIdBFP  = armBFPlate.getInt();
@@ -266,6 +353,20 @@ public class SilverHawkCore {
 			projIdSLaser = projIdShifter + 1;
 			projIdSWave = projIdShifter + 2;
 			projIdLWave = projIdShifter + 3;
+			
+			DCsDimID = DimId.getInt();
+			
+			biomeIdShifter = biomeId.getInt();
+			biomeIdRPlain = 0 + biomeIdShifter;
+			biomeIdRMountain = 1 + biomeIdShifter;
+			biomeIdRForest = 2 + biomeIdShifter;
+			biomeIdROcean = 3 + biomeIdShifter;
+			biomeIdRmine = 4 + biomeIdShifter;
+			biomeIdDplain = 5 + biomeIdShifter;
+			biomeIdDmountain = 6 + biomeIdShifter;
+			biomeIdDLava = 7 + biomeIdShifter;
+			biomeIdRBeach = 8 + biomeIdShifter;
+			biomeIdRMountainEdge = 9 + biomeIdShifter;
 
 		}
 		catch (Exception e)
@@ -282,6 +383,7 @@ public class SilverHawkCore {
 		MinecraftForge.EVENT_BUS.register(new NewSoundEvent());
 		
 		//Resister materials
+		//blocks
 		Ores = (new BlockOreFluorite(blockIdOre)).
 				setUnlocalizedName("defeatedcrow.ores").
 				setCreativeTab(SilverHawkCore.crowsdefeat);
@@ -308,7 +410,33 @@ public class SilverHawkCore {
 				setUnlocalizedName("defeatedcrow.glowingMoss").
 				setCreativeTab(SilverHawkCore.crowsdefeat);
 		
+		//teleporter
+		SHPortal = (new BlockSHPortal(blockIdGamePortal)).
+				setUnlocalizedName("defeatedcrow.portalBlock").
+				setCreativeTab(SilverHawkCore.crowsdefeat);
+		
+		//terrain blocks
+		ClearStone = (new BlockClearStone(blockIdCLStone)).
+				setUnlocalizedName("defeatedcrow.clearStones").
+				setCreativeTab(SilverHawkCore.crowsdefeat);
+		
+		ClearGround = (new BlockClearGround(blockIdCLGround)).
+				setUnlocalizedName("defeatedcrow.clearGrounds").
+				setCreativeTab(SilverHawkCore.crowsdefeat);
+		
+		ClearGrass = (new BlockClearGrass(blockIdCLGrass)).
+				setUnlocalizedName("defeatedcrow.clearGrass").
+				setCreativeTab(SilverHawkCore.crowsdefeat);
+		
+		ClearOre = (new BlockClearOre(blockIdCLOre)).
+				setUnlocalizedName("defeatedcrow.clearOres").
+				setCreativeTab(SilverHawkCore.crowsdefeat);
+		
+		NeoBedrock = (new BlockNeoBedrock(blockIdNeoBedrock)).
+				setUnlocalizedName("defeatedcrow.clearBedrock").
+				setCreativeTab(SilverHawkCore.crowsdefeat);
 
+		//items
 		Fluorite = (new ItemFluorite(itemIdFluorite - 256)).
 				setUnlocalizedName("defeatedcrow.fluorite").
 				setCreativeTab(SilverHawkCore.crowsdefeat);
@@ -403,6 +531,13 @@ public class SilverHawkCore {
 		GameRegistry.registerBlock(CDLantern, "defeatedcrow.CDLantern");
 		GameRegistry.registerBlock(GlowButton, "defeatedcrow.glowingButton");
 		GameRegistry.registerBlock(GlowMoss, "defeatedcrow.glowingMoss");
+		GameRegistry.registerBlock(SHPortal, "defeatedcrow.portalBlock");
+		
+		GameRegistry.registerBlock(ClearStone, ItemClearStone.class, "defeatedcrow.clearStone");
+		GameRegistry.registerBlock(ClearGround, ItemClearGrounds.class, "defeatedcrow.clearGround");
+		GameRegistry.registerBlock(ClearOre, ItemClearOres.class, "defeatedcrow.clearOre");
+		GameRegistry.registerBlock(ClearGrass, "defeatedcrow.clearGrass");
+		GameRegistry.registerBlock(NeoBedrock, "defeatedcrow.clearBedrock");
 		
 		GameRegistry.registerItem(Fluorite, "defeatedcrow.fluorite");
 		GameRegistry.registerItem(BlackEgg, "defeatedcrow.materials");
@@ -487,6 +622,7 @@ public class SilverHawkCore {
 	    
 	    //registering renderer
 	    this.modelLantern = proxy.getRenderID();
+	    this.modelInvisible = proxy.getRenderID();
 	    proxy.registerRenderers();
 	      
 	    LanguageRegistry.instance().addStringLocalization("entity.crow.name", "en_US", "Crow");
@@ -518,6 +654,22 @@ public class SilverHawkCore {
 	    {
 	    	(new AddChestGen()).addChestItems();
 	    }
+	    
+	    //registering new dimension
+	    DimensionManager.registerProviderType(DCsDimID, WorldProviderReverse.class, false);
+	    DimensionManager.registerDimension(DCsDimID, DCsDimID);
+	    
+	    //biome dictionary
+	    BiomeDictionary.registerBiomeType(BiomeGenBaseReverse.reversePlains, BiomeDictionary.Type.PLAINS);
+	    BiomeDictionary.registerBiomeType(BiomeGenBaseReverse.reverseForest, BiomeDictionary.Type.FOREST);
+	    BiomeDictionary.registerBiomeType(BiomeGenBaseReverse.reverseOcean, BiomeDictionary.Type.WATER);
+	    BiomeDictionary.registerBiomeType(BiomeGenBaseReverse.reverseMountains, BiomeDictionary.Type.MOUNTAIN);
+	    BiomeDictionary.registerBiomeType(BiomeGenBaseReverse.reverseBeach, BiomeDictionary.Type.BEACH);
+	    BiomeDictionary.registerBiomeType(BiomeGenBaseReverse.reverseMountainEdge, BiomeDictionary.Type.MOUNTAIN);
+	    BiomeDictionary.registerBiomeType(BiomeGenBaseReverse.ReverseMine, BiomeDictionary.Type.WASTELAND);
+	    BiomeDictionary.registerBiomeType(BiomeGenBaseReverse.doublePlains, BiomeDictionary.Type.PLAINS);
+	    BiomeDictionary.registerBiomeType(BiomeGenBaseReverse.curiousMountains, BiomeDictionary.Type.MOUNTAIN);
+	    BiomeDictionary.registerBiomeType(BiomeGenBaseReverse.curiousInferno, BiomeDictionary.Type.WASTELAND);
 
 	}
 	

@@ -1,5 +1,6 @@
 package mods.defeatedcrow.world.gen;
 
+import mods.defeatedcrow.util.SHLogger;
 import net.minecraft.world.gen.layer.GenLayer;
 import net.minecraft.world.gen.layer.IntCache;
 
@@ -64,6 +65,7 @@ public class GenLayerSmoothReverse extends GenLayerReverse{
             }
         }
 
+        SHLogger.debugInfo("check6 : " + aint1.length);
         return aint1;
     }
 

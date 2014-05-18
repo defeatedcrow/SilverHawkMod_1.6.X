@@ -128,6 +128,50 @@ public class LangRegister {
 		
 		LanguageRegistry.instance().addStringLocalization("death.attack.DCsWave", "%1$s was erased by energy wave %2$s shot");
 		LanguageRegistry.instance().addStringLocalization("death.attack.DCsWave", "ja_JP", "%1$s は %2$s が撃ったエネルギー波に消し飛ばされた。");
+		
+		//new terrain
+		LanguageRegistry.addName(new ItemStack(SilverHawkCore.ClearGround, 1, 0), "Transparent Dirt");
+		LanguageRegistry.instance().addNameForObject(new ItemStack(SilverHawkCore.ClearGround, 1, 0), "ja_JP", "透光性の土");
+		LanguageRegistry.addName(new ItemStack(SilverHawkCore.ClearGround, 1, 1), "Transparent Sand");
+		LanguageRegistry.instance().addNameForObject(new ItemStack(SilverHawkCore.ClearGround, 1, 1), "ja_JP", "透光性の砂");
+		LanguageRegistry.addName(new ItemStack(SilverHawkCore.ClearGround, 1, 2), "Transparent Clay");
+		LanguageRegistry.instance().addNameForObject(new ItemStack(SilverHawkCore.ClearGround, 1, 2), "ja_JP", "透光性の粘土");
+		LanguageRegistry.addName(new ItemStack(SilverHawkCore.ClearGround, 1, 3), "Transparent Gravel");
+		LanguageRegistry.instance().addNameForObject(new ItemStack(SilverHawkCore.ClearGround, 1, 3), "ja_JP", "透光性の砂利");
+		
+		LanguageRegistry.addName(new ItemStack(SilverHawkCore.ClearGrass, 1, 0), "Transparent Grass");
+		LanguageRegistry.instance().addNameForObject(new ItemStack(SilverHawkCore.ClearGrass, 1, 0), "ja_JP", "透光性の芝");
+		
+		LanguageRegistry.addName(new ItemStack(SilverHawkCore.ClearStone, 1, 0), "Transparent Stone");
+		LanguageRegistry.instance().addNameForObject(new ItemStack(SilverHawkCore.ClearStone, 1, 0), "ja_JP", "透光石");
+		LanguageRegistry.addName(new ItemStack(SilverHawkCore.ClearStone, 1, 1), "Transparent Stone");
+		LanguageRegistry.instance().addNameForObject(new ItemStack(SilverHawkCore.ClearStone, 1, 1), "ja_JP", "透光丸石");
+		LanguageRegistry.addName(new ItemStack(SilverHawkCore.ClearStone, 1, 2), "Transparent Stone");
+		LanguageRegistry.instance().addNameForObject(new ItemStack(SilverHawkCore.ClearStone, 1, 2), "ja_JP", "透光苔石");
+		LanguageRegistry.addName(new ItemStack(SilverHawkCore.ClearStone, 1, 3), "Transparent Stone");
+		LanguageRegistry.instance().addNameForObject(new ItemStack(SilverHawkCore.ClearStone, 1, 3), "ja_JP", "透光石レンガ");
+		
+		LanguageRegistry.addName(new ItemStack(SilverHawkCore.ClearOre, 1, 0), "Transparent Coal Ore");
+		LanguageRegistry.instance().addNameForObject(new ItemStack(SilverHawkCore.ClearOre, 1, 0), "ja_JP", "透光性の石炭鉱石");
+		LanguageRegistry.addName(new ItemStack(SilverHawkCore.ClearOre, 1, 1), "Transparent Iron Ore");
+		LanguageRegistry.instance().addNameForObject(new ItemStack(SilverHawkCore.ClearOre, 1, 1), "ja_JP", "透光性の鉄鉱石");
+		LanguageRegistry.addName(new ItemStack(SilverHawkCore.ClearOre, 1, 2), "Transparent Gold Ore");
+		LanguageRegistry.instance().addNameForObject(new ItemStack(SilverHawkCore.ClearOre, 1, 2), "ja_JP", "透光性の金鉱石");
+		LanguageRegistry.addName(new ItemStack(SilverHawkCore.ClearOre, 1, 3), "Transparent Diamond Ore");
+		LanguageRegistry.instance().addNameForObject(new ItemStack(SilverHawkCore.ClearOre, 1, 3), "ja_JP", "透光性のダイヤ鉱石");
+		LanguageRegistry.addName(new ItemStack(SilverHawkCore.ClearOre, 1, 4), "Transparent Red Ore");
+		LanguageRegistry.instance().addNameForObject(new ItemStack(SilverHawkCore.ClearOre, 1, 4), "ja_JP", "透光性のレッドストーン鉱石");
+		LanguageRegistry.addName(new ItemStack(SilverHawkCore.ClearOre, 1, 5), "Transparent Emerald Ore");
+		LanguageRegistry.instance().addNameForObject(new ItemStack(SilverHawkCore.ClearOre, 1, 5), "ja_JP", "透光性のエメラルド鉱石");
+		LanguageRegistry.addName(new ItemStack(SilverHawkCore.ClearOre, 1, 6), "Transparent Fluorite Ore");
+		LanguageRegistry.instance().addNameForObject(new ItemStack(SilverHawkCore.ClearOre, 1, 6), "ja_JP", "透光性の蛍石鉱石");
+		LanguageRegistry.addName(new ItemStack(SilverHawkCore.ClearOre, 1, 7), "Transparent Silver Ore");
+		LanguageRegistry.instance().addNameForObject(new ItemStack(SilverHawkCore.ClearOre, 1, 7), "ja_JP", "透光性の銀鉱石");
+		LanguageRegistry.addName(new ItemStack(SilverHawkCore.ClearOre, 1, 8), "Transparent Crocoite Ore");
+		LanguageRegistry.instance().addNameForObject(new ItemStack(SilverHawkCore.ClearOre, 1, 8), "ja_JP", "透光性の紅鉛鉱石");
+		
+		LanguageRegistry.addName(new ItemStack(SilverHawkCore.NeoBedrock, 1, 5), "Transparent Bedrock");
+		LanguageRegistry.instance().addNameForObject(new ItemStack(SilverHawkCore.NeoBedrock, 1, 5), "ja_JP", "ネオ岩盤");
 	}
 
 }

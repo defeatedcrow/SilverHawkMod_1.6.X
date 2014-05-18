@@ -134,17 +134,17 @@ public class EntitySilverHawk extends EntityTameable implements IEntityFlighter{
 	
 	protected String getLivingSound()
     {
-        return "crowsdefeat:crowcry";
+        return "crowsdefeat:hawk_cry";
     }
 	
 	protected String getHurtSound()
     {
-        return "mob.bat.hurt";
+        return "crowsdefeat:hawk_hurt";
     }
 	
 	protected String getDeathSound()
     {
-        return "mob.bat.hurt";
+        return "crowsdefeat:hawk_hurt";
     }
 	
 	//entity NBT

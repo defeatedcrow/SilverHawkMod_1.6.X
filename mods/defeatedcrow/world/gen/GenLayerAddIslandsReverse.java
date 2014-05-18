@@ -1,5 +1,6 @@
 package mods.defeatedcrow.world.gen;
 
+import mods.defeatedcrow.util.SHLogger;
 import net.minecraft.world.biome.BiomeGenBase;
 import net.minecraft.world.gen.layer.GenLayer;
 import net.minecraft.world.gen.layer.IntCache;
@@ -81,6 +82,7 @@ public class GenLayerAddIslandsReverse extends GenLayerReverse
             }
         }
 
+        SHLogger.debugInfo("check3 : " + aint1.length);
         return aint1;
     }
 }

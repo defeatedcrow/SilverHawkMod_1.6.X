@@ -18,10 +18,16 @@ public class NewSoundEvent{
 	{
 		
 		String dir1 = new String("crowsdefeat:crowcry.ogg");
+		String dir2 = new String("crowsdefeat:hawk_cry.ogg");
+		String dir3 = new String("crowsdefeat:hawk_hurt.ogg");
+		String dir4 = new String("crowsdefeat:suzu.ogg");
 		
 		try
 		{
 			event.manager.soundPoolSounds.addSound(dir1);
+			event.manager.soundPoolSounds.addSound(dir2);
+			event.manager.soundPoolSounds.addSound(dir3);
+			event.manager.soundPoolSounds.addSound(dir4);
 		}
 		catch (Exception e)
 		{

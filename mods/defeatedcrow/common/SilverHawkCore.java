@@ -60,7 +60,7 @@ import cpw.mods.fml.relauncher.SideOnly;
 @Mod(
 		modid = "DCsSilverHawk",
 		name = "SilverHawkMod",
-		version = "1.6.4_0.2C"
+		version = "1.6.4_0.2D"
 		)
 @NetworkMod(
 		clientSideRequired = true,
@@ -202,7 +202,8 @@ public class SilverHawkCore {
 	public static EnumToolMaterial enumToolMaterialCrow;
 	public static EnumToolMaterial enumToolMaterialCrow2;
 	
-	public static boolean isDebugMode = true;
+	public static boolean isDebugMode = false;
+	public static boolean visibleBlock = false;
 	
 	public static boolean loaded_IC2 = false;
 	public static boolean loaded_RC = false;
@@ -285,6 +286,8 @@ public class SilverHawkCore {
 					"Disable the bullet damage given to the animal.");
 			Property disDamageVillager = cfg.get("Setting", "Disable Damage for Villager", disableDamageForVillager,
 					"Disable the bullet damage given to the villager.");
+			Property visible = cfg.get("Setting", "Visible Transparent Bedrock", visibleBlock,
+					"Enable the invisible blocks visible mode. (for example, the Transparent Bedrock)");
 			
 			Property projId = cfg.get("entity_projectile", "Projectiles ID Shift", projIdShifter,
 					"Shift ID number of the projectiles of this MOD.");
@@ -347,6 +350,7 @@ public class SilverHawkCore {
 			addDungeonRootCD = chestBoolean.getBoolean(true);
 			disableDamageForTameable = disDamageTameable.getBoolean(true);
 			disableDamageForVillager = disDamageVillager.getBoolean(true);
+			visibleBlock = visible.getBoolean(false);
 			
 			projIdShifter = projId.getInt();
 			projIdNormal = projIdShifter + 0;
@@ -412,8 +416,7 @@ public class SilverHawkCore {
 		
 		//teleporter
 		SHPortal = (new BlockSHPortal(blockIdGamePortal)).
-				setUnlocalizedName("defeatedcrow.portalBlock").
-				setCreativeTab(SilverHawkCore.crowsdefeat);
+				setUnlocalizedName("defeatedcrow.portalBlock");
 		
 		//terrain blocks
 		ClearStone = (new BlockClearStone(blockIdCLStone)).
@@ -579,6 +582,16 @@ public class SilverHawkCore {
 	    OreDictionary.registerOre("dustLead", new ItemStack(this.dustSilver, 1, 1));
 	    OreDictionary.registerOre("dustChromeVI", new ItemStack(this.dustSilver, 1, 2));
 	    
+	    OreDictionary.registerOre("oreCoal", new ItemStack(this.ClearOre, 1, 0));
+	    OreDictionary.registerOre("oreIron", new ItemStack(this.ClearOre, 1, 1));
+	    OreDictionary.registerOre("oreGold", new ItemStack(this.ClearOre, 1, 2));
+	    OreDictionary.registerOre("oreDiamond", new ItemStack(this.ClearOre, 1, 3));
+	    OreDictionary.registerOre("oreRedstone", new ItemStack(this.ClearOre, 1, 4));
+	    OreDictionary.registerOre("oreEmerald", new ItemStack(this.ClearOre, 1, 5));
+	    OreDictionary.registerOre("oreFluorite", new ItemStack(this.ClearOre, 1, 6));
+	    OreDictionary.registerOre("oreSilver", new ItemStack(this.ClearOre, 1, 7));
+	    OreDictionary.registerOre("oreCrocoite", new ItemStack(this.ClearOre, 1, 8));
+	    
 	}
 	
 	@EventHandler
@@ -586,11 +599,12 @@ public class SilverHawkCore {
 	{
 	      
 	    //Registering entity
-	    if(entityIdCrow != 0) {
-	    	EntityRegistry.registerGlobalEntityID(EntityCrow.class, "crow", entityIdCrow, 0x000000, 0xB000CC);
+	    if(entityIdCrow == 0) {
+	    	
+	    	EntityRegistry.registerGlobalEntityID(EntityCrow.class, "crow", EntityRegistry.findGlobalUniqueEntityId(), 0x000000, 0xB000CC);
 	    }
 	    else {
-	    	EntityRegistry.registerGlobalEntityID(EntityCrow.class, "crow", EntityRegistry.findGlobalUniqueEntityId(), 0x000000, 0xB000CC);
+	    	EntityRegistry.registerGlobalEntityID(EntityCrow.class, "crow", entityIdCrow, 0x000000, 0xB000CC);
 	    }
 	    
 	    //mobs
@@ -656,8 +670,11 @@ public class SilverHawkCore {
 	    }
 	    
 	    //registering new dimension
-	    DimensionManager.registerProviderType(DCsDimID, WorldProviderReverse.class, false);
-	    DimensionManager.registerDimension(DCsDimID, DCsDimID);
+//	    DimensionManager.registerProviderType(DCsDimID, WorldProviderReverse.class, false);
+//	    DimensionManager.registerDimension(DCsDimID, DCsDimID);
+	    
+//	    if (BiomeGenBaseReverse.registerBiome())
+//	    	SHLogger.debugInfo("Succeed to register biomes.");
 	    
 	    //biome dictionary
 	    BiomeDictionary.registerBiomeType(BiomeGenBaseReverse.reversePlains, BiomeDictionary.Type.PLAINS);
@@ -666,7 +683,7 @@ public class SilverHawkCore {
 	    BiomeDictionary.registerBiomeType(BiomeGenBaseReverse.reverseMountains, BiomeDictionary.Type.MOUNTAIN);
 	    BiomeDictionary.registerBiomeType(BiomeGenBaseReverse.reverseBeach, BiomeDictionary.Type.BEACH);
 	    BiomeDictionary.registerBiomeType(BiomeGenBaseReverse.reverseMountainEdge, BiomeDictionary.Type.MOUNTAIN);
-	    BiomeDictionary.registerBiomeType(BiomeGenBaseReverse.ReverseMine, BiomeDictionary.Type.WASTELAND);
+	    BiomeDictionary.registerBiomeType(BiomeGenBaseReverse.reverseMine, BiomeDictionary.Type.WASTELAND);
 	    BiomeDictionary.registerBiomeType(BiomeGenBaseReverse.doublePlains, BiomeDictionary.Type.PLAINS);
 	    BiomeDictionary.registerBiomeType(BiomeGenBaseReverse.curiousMountains, BiomeDictionary.Type.MOUNTAIN);
 	    BiomeDictionary.registerBiomeType(BiomeGenBaseReverse.curiousInferno, BiomeDictionary.Type.WASTELAND);

@@ -288,7 +288,7 @@ public class MapGenCaveReverse extends MapGenBase{
     //特殊ブロックで覆われたバイオーム。土・草以外はここでチェック。
     private boolean isExceptionBiome(BiomeGenBase biome)
     {
-        if (biome == BiomeGenBaseReverse.ReverseMine) return true;//石の露出
+        if (biome == BiomeGenBaseReverse.reverseMine) return true;//石の露出
         if (biome == BiomeGenBaseReverse.reverseBeach) return true;//砂
         if (biome == BiomeGenBaseReverse.curiousInferno) return true;
         return false;

@@ -16,6 +16,7 @@ import mods.defeatedcrow.common.SHPacketHandler;
 import mods.defeatedcrow.common.SilverHawkCore;
 import mods.defeatedcrow.entity.EnumFlighterType;
 import mods.defeatedcrow.entity.IEntityFlighter;
+import mods.defeatedcrow.util.SHLogger;
 import net.minecraft.block.Block;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.entity.Entity;
@@ -101,7 +102,7 @@ public class PlateSWEvent implements IForgeEvent {
 		/**クライアント限定処理。主にキー入力に対応するもの。
 		 * その1：特定の装備品を着ている時にプレイヤー自身の動作を操作。多分クライアント側だけ動かせば動くっぽい
 		 * その2：エンティティ（弾）を発生させる。同期が必要なのでパケットを送る*/
-		if (entity != null && (entity instanceof EntityPlayer) && entity.worldObj.isRemote)
+		if (entity != null && entity.worldObj.isRemote && (entity instanceof EntityPlayerSP))
 		{
 			EntityPlayerSP playerSP = (EntityPlayerSP)event.entity;
 			InventoryPlayer inventorySP = playerSP.inventory;
@@ -165,6 +166,7 @@ public class PlateSWEvent implements IForgeEvent {
 								break;
 							}
 							
+							SHLogger.debugInfo("current proj type : " + projType);
 							this.sendProj(x, y, z, projType, this.flyKeyTime);
 							this.flyKeyTime = 0;
 					}

@@ -182,6 +182,14 @@ public class RecipeRegister {
 		 
 		 GameRegistry.addRecipe(
 				 new ShapedOreRecipe(
+	    		  new ItemStack(SilverHawkCore.fluoroSword, 1),
+	    		  new Object[]{" X "," X ","YZY",
+	    			  Character.valueOf('X'), new ItemStack(Item.ingotIron, 1, 0),
+	    			  Character.valueOf('Y'), new ItemStack(SilverHawkCore.Fluorite, 1, 0),
+	    			  Character.valueOf('Z'), "stickWood"}));
+		 
+		 GameRegistry.addRecipe(
+				 new ShapedOreRecipe(
 	    		  new ItemStack(SilverHawkCore.blueSword, 1),
 	    		  new Object[]{" X "," X ","YZY",
 	    			  Character.valueOf('X'), "ingotSilver",

@@ -1,5 +1,6 @@
 package mods.defeatedcrow.world.gen;
 
+import mods.defeatedcrow.util.SHLogger;
 import net.minecraft.world.WorldType;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.terraingen.WorldTypeEvent;
@@ -52,7 +53,7 @@ public abstract class GenLayerReverse {
         GenLayerReverse genlayer1 = GenLayerZoomReverse.magnify(1000L, genlayercuriouslava, 0);
         
         //バイオームの適用
-        GenLayerBiomeReverse genlayerbiome = new GenLayerBiomeReverse(200L, genlayer1, par2WorldType);
+        GenLayerBiomeReverse genlayerbiome = new GenLayerBiomeReverse(200L, genlayersmooth, par2WorldType);
         genlayer1 = GenLayerZoomReverse.magnify(1000L, genlayerbiome, 2);
         
         //GenLayerHillsと同様の役目

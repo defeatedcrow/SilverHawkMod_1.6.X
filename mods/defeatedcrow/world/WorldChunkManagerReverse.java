@@ -7,6 +7,7 @@ import java.util.Random;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import mods.defeatedcrow.util.SHLogger;
 import mods.defeatedcrow.world.biome.BiomeGenBaseReverse;
 import mods.defeatedcrow.world.gen.GenLayerReverse;
 import net.minecraft.world.ChunkPosition;
@@ -34,16 +35,17 @@ public class WorldChunkManagerReverse extends WorldChunkManager{
     private GenLayerReverse biomeIndexLayer;
 
     /** The BiomeCache object for this world. */
-    private BiomeCache biomeCache;
+    private BiomeCacheReverse biomeCache;
 
     /** A list of biomes that the player can spawn in. */
     private List biomesToSpawnIn;
 
     protected WorldChunkManagerReverse()
     {
-        this.biomeCache = new BiomeCache(this);
+        this.biomeCache = new BiomeCacheReverse(this);
         this.biomesToSpawnIn = new ArrayList();
         this.biomesToSpawnIn.addAll(allowedBiomes);
+        SHLogger.debugInfo("I'm here! : " + allowedBiomes.size());
     }
     
     public WorldChunkManagerReverse(long par1, WorldType par3WorldType)
@@ -51,6 +53,7 @@ public class WorldChunkManagerReverse extends WorldChunkManager{
         this();
         GenLayerReverse agenlayer = GenLayerReverse.initializeAllBiomeGenerators(par1, par3WorldType);
         this.genBiomes = agenlayer;
+        if (this.genBiomes != null) SHLogger.debugInfo("GenBiomes are here too! : " + this.genBiomes.toString());
     }
     
     public WorldChunkManagerReverse(World par1World)

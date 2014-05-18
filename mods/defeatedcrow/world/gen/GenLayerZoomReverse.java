@@ -1,5 +1,6 @@
 package mods.defeatedcrow.world.gen;
 
+import mods.defeatedcrow.util.SHLogger;
 import net.minecraft.world.gen.layer.GenLayer;
 import net.minecraft.world.gen.layer.GenLayerZoom;
 import net.minecraft.world.gen.layer.IntCache;
@@ -55,6 +56,7 @@ public class GenLayerZoomReverse extends GenLayerReverse{
             System.arraycopy(aint1, (j2 + (par2 & 1)) * (k1 << 1) + (par1 & 1), aint2, j2 * par3, par3);
         }
 
+        SHLogger.debugInfo("check4 : " + aint2.length);
         return aint2;
     }
 

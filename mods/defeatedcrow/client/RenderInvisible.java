@@ -39,6 +39,14 @@ public class RenderInvisible implements ISimpleBlockRenderingHandler{
 		
 		if (modelId == this.getRenderId())
 		{
+			if (SilverHawkCore.visibleBlock)
+			{
+				renderer.setOverrideBlockTexture(this.blockIcon);
+				block.setBlockBounds(0.0F/16.0F, 0.0F/16.0F, 0.0F/16.0F, 16.0F/16.0F, 16.0F/16.0F, 16.0F/16.0F);
+				renderer.setRenderBoundsFromBlock(block);
+				renderer.renderStandardBlock(block, x, y, z);
+			}
+			
 			renderer.clearOverrideBlockTexture();
 			block.setBlockBounds(0.0F, 0.0F, 0.0F, 1.0F, 1.0F, 1.0F);
 			renderer.setRenderBoundsFromBlock(block);

@@ -1,5 +1,6 @@
 package mods.defeatedcrow.world.gen;
 
+import mods.defeatedcrow.util.SHLogger;
 import mods.defeatedcrow.world.biome.BiomeGenBaseReverse;
 import net.minecraft.world.biome.BiomeGenBase;
 import net.minecraft.world.gen.layer.GenLayer;
@@ -74,6 +75,7 @@ public class GenLayerRSub extends GenLayerReverse
             }
         }
 
+        SHLogger.debugInfo("check8 : " + aint1.length);
         return aint1;
     }
 }

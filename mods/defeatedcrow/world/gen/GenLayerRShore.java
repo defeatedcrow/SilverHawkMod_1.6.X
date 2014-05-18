@@ -1,5 +1,6 @@
 package mods.defeatedcrow.world.gen;
 
+import mods.defeatedcrow.util.SHLogger;
 import mods.defeatedcrow.world.biome.BiomeGenBaseReverse;
 import net.minecraft.world.biome.BiomeGenBase;
 import net.minecraft.world.gen.layer.GenLayer;
@@ -51,7 +52,7 @@ public class GenLayerRShore extends GenLayerReverse{
                     }
                     else
                     {
-                        aint1[j1 + i1 * par3] = BiomeGenBaseReverse.ReverseMine.biomeID;
+                        aint1[j1 + i1 * par3] = BiomeGenBaseReverse.reverseMine.biomeID;
                     }
                 }
                 else if (k1 != BiomeGenBaseReverse.reverseOcean.biomeID && k1 != BiomeGenBaseReverse.reverseMountains.biomeID)
@@ -93,6 +94,7 @@ public class GenLayerRShore extends GenLayerReverse{
             }
         }
 
+        SHLogger.debugInfo("check9 : " + aint1.length);
         return aint1;
     }
 }
